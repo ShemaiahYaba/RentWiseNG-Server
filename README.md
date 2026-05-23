@@ -95,6 +95,10 @@ src/
 | `auditLog` | Scoped audit trail | Phase 2 |
 | `admin` | Verification queues, config | Phase 2 |
 
+## Contributing
+
+New to the repo or coming from JavaScript? See **[CONTRIBUTING.md](./CONTRIBUTING.md)** — collaboration split, copy-paste patterns (routes → controller → service → repo), Zod validation, auth, and examples based on the `auth` module.
+
 ## Conventions
 
 - **Response shape:** `{ status, message, data }` via `ok`, `created`, `fail` in `src/lib/response.ts`
