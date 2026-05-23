@@ -22,8 +22,8 @@ Owns user registration, login, logout, JWT refresh rotation, phone/email OTP ver
 
 ## OTP flow
 
-1. On register, 6-digit OTPs are generated for email and phone (logged in dev; replace with SMS/email provider in production).
+1. On register, 6-digit OTPs are generated for email and phone. Email OTPs are sent via Resend; the code is also logged in development. Phone OTPs are logged only (SMS provider in a later phase).
 2. Authenticated user calls verify endpoints with `code`.
 3. Successful verification sets `email_verified` or `phone_verified` on `users`.
 
-Config lives in `src/config/betterAuth.ts` (secret, expiry, Google OAuth).
+JWT signing, token expiry, Google OAuth, and Resend settings are configured via `src/config/env.ts`.

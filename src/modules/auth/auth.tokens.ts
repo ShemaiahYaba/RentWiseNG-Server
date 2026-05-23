@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
-import jwt from 'jsonwebtoken';
-import { betterAuthConfig } from '../../config/betterAuth.js';
+import jwt, { type SignOptions } from 'jsonwebtoken';
+import { env } from '../../config/env.js';
 import type { UserRole } from '../../types/common.js';
 
 export interface AccessTokenPayload {
@@ -25,8 +25,8 @@ export function generateRefreshToken(): string {
 
 export function signAccessToken(userId: string, role: UserRole): { token: string; expiresAt: Date } {
   const expiresAt = new Date();
-  const token = jwt.sign({ sub: userId, role } satisfies AccessTokenPayload, betterAuthConfig.secret, {
-    expiresIn: betterAuthConfig.accessTokenExpiresIn,
+  const token = jwt.sign({ sub: userId, role } satisfies AccessTokenPayload, env.JWT_SECRET, {
+    expiresIn: env.JWT_ACCESS_EXPIRES_IN as SignOptions['expiresIn'],
   });
   const decoded = jwt.decode(token) as { exp: number };
   expiresAt.setTime(decoded.exp * 1000);
@@ -34,12 +34,12 @@ export function signAccessToken(userId: string, role: UserRole): { token: string
 }
 
 export function verifyAccessToken(token: string): AccessTokenPayload {
-  const payload = jwt.verify(token, betterAuthConfig.secret) as AccessTokenPayload;
+  const payload = jwt.verify(token, env.JWT_SECRET) as AccessTokenPayload;
   return payload;
 }
 
 export function getRefreshTokenExpiry(): Date {
-  const ms = parseDurationMs(betterAuthConfig.refreshTokenExpiresIn);
+  const ms = parseDurationMs(env.JWT_REFRESH_EXPIRES_IN);
   return new Date(Date.now() + ms);
 }
 

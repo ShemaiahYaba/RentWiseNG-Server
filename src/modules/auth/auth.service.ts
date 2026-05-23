@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
-import { betterAuthConfig } from '../../config/betterAuth.js';
+import { env } from '../../config/env.js';
 import { AppError } from '../../lib/errors.js';
 import type { UserRole } from '../../types/common.js';
 import { generateOtp, verifyOtp } from './auth.otp.js';
@@ -10,9 +10,10 @@ import type { RegisterInput, LoginInput } from './auth.schema.js';
 import { createTokenPair, hashRefreshToken, type TokenPair } from './auth.tokens.js';
 
 const SALT_ROUNDS = 12;
-const googleClient = betterAuthConfig.google.enabled
-  ? new OAuth2Client(betterAuthConfig.google.clientId)
-  : null;
+const googleClient =
+  env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+    ? new OAuth2Client(env.GOOGLE_CLIENT_ID)
+    : null;
 
 function sanitizeUser(user: Awaited<ReturnType<typeof authRepo.findById>>) {
   if (!user) return null;
@@ -65,8 +66,8 @@ export const authService = {
       passwordHash,
     });
 
-    generateOtp(user.id, 'email', email);
-    generateOtp(user.id, 'phone', input.phone);
+    await generateOtp(user.id, 'email', email);
+    await generateOtp(user.id, 'phone', input.phone);
 
     const tokens = await issueSession(user.id, user.role as UserRole, meta);
     return {
@@ -130,12 +131,12 @@ export const authService = {
     role?: UserRole,
     meta?: { ipAddress?: string; userAgent?: string },
   ) {
-    if (!googleClient || !betterAuthConfig.google.clientId) {
+    if (!googleClient || !env.GOOGLE_CLIENT_ID) {
       throw new AppError('google oauth is not configured', 503);
     }
     const ticket = await googleClient.verifyIdToken({
       idToken,
-      audience: betterAuthConfig.google.clientId,
+      audience: env.GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
     if (!payload?.sub || !payload.email) {

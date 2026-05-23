@@ -27,8 +27,10 @@ After installing dependencies, pin exact versions once: `pnpm run deps:pin`.
 Copy `.env.example` to `.env`. All variables are validated at startup via Zod in `src/config/env.ts`. Required:
 
 - `DATABASE_URL` — Neon connection string
-- `BETTER_AUTH_SECRET` — at least 32 characters (JWT signing)
-- `BETTER_AUTH_URL` — public API base URL (e.g. `http://localhost:3000`)
+- `JWT_SECRET` — at least 32 characters (JWT signing)
+- `APP_URL` — public API base URL (e.g. `http://localhost:3000`)
+- `RESEND_API_KEY` — Resend API key for email OTP delivery
+- `RESEND_FROM_EMAIL` — verified sender address (e.g. `RentWise <onboarding@yourdomain.com>`)
 
 See `.env.example` for the full list with descriptions.
 
@@ -66,7 +68,7 @@ pnpm run lint
 
 ```
 src/
-├── config/       # env, db, sentry, swagger, betterAuth config
+├── config/       # env, db, sentry, swagger, resend
 ├── context/      # AsyncLocalStorage requestId
 ├── db/schema/    # Drizzle table definitions
 ├── lib/          # logger, response, validate, errors

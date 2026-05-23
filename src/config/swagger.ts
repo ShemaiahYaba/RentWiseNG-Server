@@ -11,7 +11,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: `${env.BETTER_AUTH_URL}/api/v1`,
+        url: `${env.APP_URL}/api/v1`,
         description: env.NODE_ENV === 'production' ? 'Production' : 'Development',
       },
     ],
