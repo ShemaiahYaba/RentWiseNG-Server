@@ -12,13 +12,15 @@ Backend API for RentWise — Team Neon, TechCrush Alumni Buildathon 2026.
 ```bash
 git clone <repo-url>
 cd Rentwise-Server
-npm install
+pnpm install   # or: npm install
 cp .env.example .env
 # Edit .env with your Neon DATABASE_URL and secrets
-npm run generate   # create migration from schema (first time)
-npm run migrate    # apply migrations
-npm run dev        # start dev server with hot reload
+pnpm run generate   # create migration from schema (first time)
+pnpm run migrate    # apply migrations
+pnpm run dev        # start dev server with hot reload
 ```
+
+After installing dependencies, pin exact versions once: `pnpm run deps:pin`.
 
 ## Environment variables
 
@@ -41,6 +43,18 @@ See `.env.example` for the full list with descriptions.
 | `npm run migrate` | `drizzle-kit migrate` — apply migrations |
 | `npm run lint` | ESLint on `src/` |
 | `npm run format` | Prettier write |
+| `pnpm run deps:pin` | Set exact dependency versions from `pnpm-lock.yaml` |
+| `pnpm run deps:check` | Fail if `package.json` has ranges or drifts from lockfile (use in CI) |
+| `pnpm run version:bump` | Interactive semver bump from git history |
+
+### CI dependency check
+
+```bash
+pnpm install --frozen-lockfile
+pnpm run deps:check
+pnpm run build
+pnpm run lint
+```
 
 ## API
 
