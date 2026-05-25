@@ -534,6 +534,12 @@ curl -s http://localhost:3000/api/v1/listings \
 
 ---
 
+## Wave 1 (Samuel)
+
+If you own **user**, **kyc**, and **reports**, use the dedicated guide: **[docs/WAVE-1-SAMUEL.md](docs/WAVE-1-SAMUEL.md)**.
+
+---
+
 ## FAQ
 
 **Can I write plain JavaScript?**  

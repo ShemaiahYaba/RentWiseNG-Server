@@ -79,6 +79,10 @@ src/
 └── server.ts     # HTTP listener
 ```
 
+## Shipping checklist
+
+Full API build order, Samuel vs Shemaiah ownership, parallel waves: **[docs/MODULE-DEPENDENCIES.md](docs/MODULE-DEPENDENCIES.md)**.
+
 ## Module ownership map
 
 | Module | Owner focus | Phase |
