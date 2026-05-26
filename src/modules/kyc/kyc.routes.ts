@@ -5,7 +5,7 @@ import { requireRole } from '../../middleware/requireRole.js';
 import { kycController } from './kyc.controller.js';
 import { submitKycSchema } from './kyc.schema.js';
 
-export const kycRouter = Router();
+export const kycRouter: Router = Router();
 
 /**
  * @swagger
@@ -16,8 +16,8 @@ export const kycRouter = Router();
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       501:
- *         description: Phase 2
+ *       403:
+ *         description: Forbidden
  */
 kycRouter.post(
   '/',
@@ -38,5 +38,7 @@ kycRouter.post(
  *     responses:
  *       501:
  *         description: Phase 2
+ *       404:
+ *         description: submission not found
  */
 kycRouter.get('/me', authenticate, kycController.getMe);

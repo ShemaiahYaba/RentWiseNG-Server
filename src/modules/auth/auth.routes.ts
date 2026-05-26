@@ -13,7 +13,7 @@ import {
   verifyPhoneSchema,
 } from './auth.schema.js';
 
-export const authRouter = Router();
+export const authRouter:Router = Router();
 
 /**
  * @swagger

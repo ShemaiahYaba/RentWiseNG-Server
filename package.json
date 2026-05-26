@@ -15,7 +15,8 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "deps:pin": "tsx scripts/deps-pin.ts",
     "deps:check": "tsx scripts/deps-check.ts",
-    "version:bump": "tsx scripts/version-bump.ts"
+    "version:bump": "tsx scripts/version-bump.ts",
+    "seed": "tsx src/db/seed.ts"
   },
   "engines": {
     "node": ">=20"
@@ -23,7 +24,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@neondatabase/serverless": "1.1.0",
+    "@neondatabase/serverless": "0.10.2",
     "@sentry/node": "9.47.1",
     "bcryptjs": "3.0.3",
     "cors": "2.8.6",

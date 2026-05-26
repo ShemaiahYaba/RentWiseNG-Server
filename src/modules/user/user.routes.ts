@@ -4,7 +4,7 @@ import { authenticate } from '../../middleware/authenticate.js';
 import { userController } from './user.controller.js';
 import { updateMeSchema } from './user.schema.js';
 
-export const userRouter = Router();
+export const userRouter: Router = Router();
 
 /**
  * @swagger

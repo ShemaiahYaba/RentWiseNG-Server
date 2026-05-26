@@ -7,3 +7,5 @@ export const submitKycSchema = z.object({
   documentBackUrl: z.string().url().optional(),
   selfieUrl: z.string().url().optional(),
 });
+
+export type SubmitKycInput = z.infer<typeof submitKycSchema>;

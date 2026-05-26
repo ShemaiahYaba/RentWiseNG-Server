@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from '../db/schema/index.js';
 import { env } from './env.js';
 
-const sql = neon(env.DATABASE_URL);
+export const sql = neon(env.DATABASE_URL);
 export const db = drizzle(sql, { schema });
 
 export async function testDatabaseConnection(): Promise<boolean> {
