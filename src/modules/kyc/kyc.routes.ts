@@ -9,15 +9,48 @@ export const kycRouter: Router = Router();
 
 /**
  * @swagger
- * /kyc:
+ * /kyc/:
  *   post:
  *     summary: Submit KYC documents
  *     tags: [KYC]
  *     security:
  *       - bearerAuth: []
+ *    requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - documentType
+ *               - documentNumber
+ *               - documentFrontUrl
+ *             properties:
+ *               documentType:
+ *                 type: string
+ *                 enum: [nin, bvn, passport, drivers_licence]
+ *               documentNumber:
+ *                 type: string
+ *               documentFrontUrl:
+ *                 type: string
+ *                 format: uri
+ *               documentBackUrl:
+ *                 type: string
+ *                 format: uri
+ *               selfieUrl:
+ *                 type: string
+ *                 format: uri
  *     responses:
+ *       201:
+ *         description: KYC submission created successfully
+ *       400:
+ *         description: Validation error: missing or invalid fields
+ *       401:
+ *         description: Missing or invalid bearer token
  *       403:
- *         description: Forbidden
+ *         description: Forbidden: only agents and landlords can submit KYC
+ *       409:
+ *         description: KYC submission already pending or approved
  */
 kycRouter.post(
   '/',
@@ -36,9 +69,11 @@ kycRouter.post(
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: KYC submission returned successfully
+ *       401:
+ *         description: Missing or invalid bearer token
  *       404:
- *         description: submission not found
+ *         description: No KYC submission found for this user
  */
 kycRouter.get('/me', authenticate, kycController.getMe);

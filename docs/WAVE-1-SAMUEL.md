@@ -25,11 +25,11 @@
 
 ## What you are shipping
 
-| # | Module | Routes | Status today |
-| --- | --- | --- | --- |
-| 1 | **user** | `GET /users/me`, `PATCH /users/me` | `GET` works; `PATCH` returns 501 |
-| 2 | **kyc** | `POST /kyc`, `GET /kyc/me` | Both 501 |
-| 3 | **reports** | `POST /reports`, `GET /reports/me` | Both 501 |
+| #   | Module      | Routes                             | Status today                     |
+| --- | ----------- | ---------------------------------- | -------------------------------- |
+| 1   | **user**    | `GET /users/me`, `PATCH /users/me` | `GET` works; `PATCH` returns 501 |
+| 2   | **kyc**     | `POST /kyc`, `GET /kyc/me`         | Both 501                         |
+| 3   | **reports** | `POST /reports`, `GET /reports/me` | Both 501                         |
 
 **Files you will mainly edit:**
 
@@ -49,10 +49,10 @@ You may use `authRepo` from `src/modules/auth/auth.repo.ts` for user lookups/upd
 
 All routes are under **`/api/v1`**.
 
-| Module | Mount path |
-| --- | --- |
-| users | `/api/v1/users` |
-| kyc | `/api/v1/kyc` |
+| Module  | Mount path        |
+| ------- | ----------------- |
+| users   | `/api/v1/users`   |
+| kyc     | `/api/v1/kyc`     |
 | reports | `/api/v1/reports` |
 
 ### Response envelope (every endpoint)
@@ -63,7 +63,7 @@ All routes are under **`/api/v1`**.
 {
   "status": "success",
   "message": "success",
-  "data": { }
+  "data": {}
 }
 ```
 
@@ -96,8 +96,8 @@ In controllers:
 ```typescript
 import { ok, created } from '../../lib/response.js';
 
-ok(res, { user });           // 200
-created(res, { kyc }, 'kyc submitted');  // 201
+ok(res, { user }); // 200
+created(res, { kyc }, 'kyc submitted'); // 201
 ```
 
 Never `res.json({ user })` without the envelope.
@@ -126,12 +126,12 @@ Get a token from `POST /api/v1/auth/login` or `/auth/register`.
 
 ### Roles
 
-| Role | Wave 1 relevance |
-| --- | --- |
-| `tenant` | reports, user profile |
-| `agent` | kyc submit, reports, user profile |
-| `landlord` | kyc submit, reports, user profile |
-| `admin` | not your routes (Shemaiah’s `admin` module) |
+| Role       | Wave 1 relevance                            |
+| ---------- | ------------------------------------------- |
+| `tenant`   | reports, user profile                       |
+| `agent`    | kyc submit, reports, user profile           |
+| `landlord` | kyc submit, reports, user profile           |
+| `admin`    | not your routes (Shemaiah’s `admin` module) |
 
 `requireRole('agent', 'landlord')` is already on `POST /kyc`.
 
@@ -181,9 +181,9 @@ import { db } from '../../config/db.js';
 
 #### `GET /api/v1/users/me`
 
-| | |
-| --- | --- |
-| Auth | Bearer required |
+|       |                        |
+| ----- | ---------------------- |
+| Auth  | Bearer required        |
 | Roles | any authenticated user |
 
 **Already implemented** in `user.service.getMe` via `authRepo.findById`. Confirm response shape below and move logic to `user.repo` if you want consistency (optional).
@@ -211,18 +211,18 @@ import { db } from '../../config/db.js';
 
 **Errors:**
 
-| Status | message | When |
-| --- | --- | --- |
-| 401 | unauthorized | missing/invalid token |
-| 404 | user not found | deleted or missing row (rare) |
+| Status | message        | When                          |
+| ------ | -------------- | ----------------------------- |
+| 401    | unauthorized   | missing/invalid token         |
+| 404    | user not found | deleted or missing row (rare) |
 
 ---
 
 #### `PATCH /api/v1/users/me`
 
-| | |
-| --- | --- |
-| Auth | Bearer required |
+|      |                               |
+| ---- | ----------------------------- |
+| Auth | Bearer required               |
 | Body | validated by `updateMeSchema` |
 
 **Request body (all optional, at least one field):**
@@ -256,12 +256,12 @@ phone: z.string().min(7).max(32).optional(),
 
 **Errors:**
 
-| Status | message |
-| --- | --- |
-| 401 | unauthorized |
-| 404 | user not found |
-| 409 | phone already in use |
-| 422 | validation error |
+| Status | message              |
+| ------ | -------------------- |
+| 401    | unauthorized         |
+| 404    | user not found       |
+| 409    | phone already in use |
+| 422    | validation error     |
 
 **Gotcha:** Empty body `{}` passes Zod but changes nothing — still return 200 with current user (or 422 if you add `.refine()` requiring one field; optional).
 
@@ -294,19 +294,19 @@ Replace `501` descriptions on PATCH with:
 
 ### Business rules (from pitch)
 
-| Rule | Detail |
-| --- | --- |
-| Who can submit | **agent** and **landlord** only (enforced on route) |
-| Tenants | No KYC — they use `GET /kyc/me` only if you allow any role; route today is `authenticate` only on GET → any role can view; returns empty/404 if never submitted |
-| One active submission | One logical KYC per user; **re-submit** soft-deletes previous row and creates new |
-| Initial status | `pending` on submit |
-| Admin decisions | `approved` / `rejected` — **Shemaiah** implements in `admin` module, not you |
-| Status history | Every transition logged in `kyc_status_logs` |
-| Document URLs | MVP: **HTTPS URLs in JSON** (client uploads to R2 or placeholder). You store URLs as strings. |
-| Document number | Pitch says encrypted at rest — **MVP:** store as submitted string; add `// TODO: encrypt via Shemaiah helper` unless he gives you a function |
-| Resubmit when rejected | Allowed — soft-delete old, new `pending` row |
-| Resubmit when pending | **409** `kyc submission already pending` (or allow replace — team default: block duplicate pending) |
-| Resubmit when approved | **409** `kyc already approved` |
+| Rule                   | Detail                                                                                                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Who can submit         | **agent** and **landlord** only (enforced on route)                                                                                                             |
+| Tenants                | No KYC — they use `GET /kyc/me` only if you allow any role; route today is `authenticate` only on GET → any role can view; returns empty/404 if never submitted |
+| One active submission  | One logical KYC per user; **re-submit** soft-deletes previous row and creates new                                                                               |
+| Initial status         | `pending` on submit                                                                                                                                             |
+| Admin decisions        | `approved` / `rejected` — **Shemaiah** implements in `admin` module, not you                                                                                    |
+| Status history         | Every transition logged in `kyc_status_logs`                                                                                                                    |
+| Document URLs          | MVP: **HTTPS URLs in JSON** (client uploads to R2 or placeholder). You store URLs as strings.                                                                   |
+| Document number        | Pitch says encrypted at rest — **MVP:** store as submitted string; add `// TODO: encrypt via Shemaiah helper` unless he gives you a function                    |
+| Resubmit when rejected | Allowed — soft-delete old, new `pending` row                                                                                                                    |
+| Resubmit when pending  | **409** `kyc submission already pending` (or allow replace — team default: block duplicate pending)                                                             |
+| Resubmit when approved | **409** `kyc already approved`                                                                                                                                  |
 
 ### Status machine
 
@@ -333,33 +333,33 @@ Replace `501` descriptions on PATCH with:
 
 **`kyc_submissions`** (`src/db/schema/kyc.ts`):
 
-| Column (TS) | Type | Notes |
-| --- | --- | --- |
-| id | uuid | PK |
-| userId | uuid | FK users |
-| documentType | varchar | `nin` \| `bvn` \| `passport` \| `drivers_licence` |
-| documentNumber | varchar(512) | store number |
-| documentFrontUrl | varchar(1024) | required URL |
-| documentBackUrl | varchar(1024)? | optional |
-| selfieUrl | varchar(1024)? | optional |
-| status | varchar | default `pending` |
-| rejectionReason | text? | null until admin rejects |
-| reviewedBy | uuid? | null until admin |
-| reviewedAt | timestamp? | null until admin |
-| submittedAt | timestamp | default now |
-| deletedAt | timestamp? | soft delete |
-| deletedBy | uuid? | set to userId on resubmit |
+| Column (TS)      | Type           | Notes                                             |
+| ---------------- | -------------- | ------------------------------------------------- |
+| id               | uuid           | PK                                                |
+| userId           | uuid           | FK users                                          |
+| documentType     | varchar        | `nin` \| `bvn` \| `passport` \| `drivers_licence` |
+| documentNumber   | varchar(512)   | store number                                      |
+| documentFrontUrl | varchar(1024)  | required URL                                      |
+| documentBackUrl  | varchar(1024)? | optional                                          |
+| selfieUrl        | varchar(1024)? | optional                                          |
+| status           | varchar        | default `pending`                                 |
+| rejectionReason  | text?          | null until admin rejects                          |
+| reviewedBy       | uuid?          | null until admin                                  |
+| reviewedAt       | timestamp?     | null until admin                                  |
+| submittedAt      | timestamp      | default now                                       |
+| deletedAt        | timestamp?     | soft delete                                       |
+| deletedBy        | uuid?          | set to userId on resubmit                         |
 
 **`kyc_status_logs`:**
 
-| Column | Notes |
-| --- | --- |
-| kycId | FK submission |
+| Column     | Notes                                                                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| kycId      | FK submission                                                                                                                             |
 | fromStatus | use `submitted` or same as `toStatus` on first create — **recommended:** `fromStatus: 'none'`, `toStatus: 'pending'`, `changedBy: userId` |
-| toStatus | `pending` |
-| changedBy | submitting user's id on create; admin id on admin transitions |
-| note | optional text |
-| changedAt | now |
+| toStatus   | `pending`                                                                                                                                 |
+| changedBy  | submitting user's id on create; admin id on admin transitions                                                                             |
+| note       | optional text                                                                                                                             |
+| changedAt  | now                                                                                                                                       |
 
 Align with Shemaiah: admin module may expect `from_status` values — use only: `pending`, `approved`, `rejected`, and for first log either omit log until admin or use `pending` → `pending` with note `initial submission` (cleanest: **insert log** `from: 'none', to: 'pending'` if admin UI allows; otherwise **only** insert submission row and let admin logs start at first review).
 
@@ -373,9 +373,9 @@ Align with Shemaiah: admin module may expect `from_status` values — use only: 
 
 #### `POST /api/v1/kyc`
 
-| | |
-| --- | --- |
-| Auth | Bearer |
+|       |                     |
+| ----- | ------------------- |
+| Auth  | Bearer              |
 | Roles | `agent`, `landlord` |
 
 **Request body** (`submitKycSchema` — already defined):
@@ -390,13 +390,13 @@ Align with Shemaiah: admin module may expect `from_status` values — use only: 
 }
 ```
 
-| Field | Required | Values |
-| --- | --- | --- |
-| documentType | yes | `nin`, `bvn`, `passport`, `drivers_licence` |
-| documentNumber | yes | non-empty string |
-| documentFrontUrl | yes | valid URL |
-| documentBackUrl | no | valid URL if present |
-| selfieUrl | no | valid URL if present |
+| Field            | Required | Values                                      |
+| ---------------- | -------- | ------------------------------------------- |
+| documentType     | yes      | `nin`, `bvn`, `passport`, `drivers_licence` |
+| documentNumber   | yes      | non-empty string                            |
+| documentFrontUrl | yes      | valid URL                                   |
+| documentBackUrl  | no       | valid URL if present                        |
+| selfieUrl        | no       | valid URL if present                        |
 
 **Service logic (`kyc.submit`):**
 
@@ -433,12 +433,12 @@ Align with Shemaiah: admin module may expect `from_status` values — use only: 
 
 **Errors:**
 
-| Status | message |
-| --- | --- |
-| 401 | unauthorized |
-| 403 | forbidden (tenant tried POST — middleware) |
-| 409 | kyc already approved / submission already pending |
-| 422 | validation error |
+| Status | message                                           |
+| ------ | ------------------------------------------------- |
+| 401    | unauthorized                                      |
+| 403    | forbidden (tenant tried POST — middleware)        |
+| 409    | kyc already approved / submission already pending |
+| 422    | validation error                                  |
 
 **Controller fix:** today `submit` does not send a response — add `created(res, { kyc })`.
 
@@ -446,9 +446,9 @@ Align with Shemaiah: admin module may expect `from_status` values — use only: 
 
 #### `GET /api/v1/kyc/me`
 
-| | |
-| --- | --- |
-| Auth | Bearer |
+|       |                             |
+| ----- | --------------------------- |
+| Auth  | Bearer                      |
 | Roles | any (agent/landlord/tenant) |
 
 **Logic:**
@@ -523,31 +523,31 @@ import { kycSubmissions, kycStatusLogs } from '../../db/schema/kyc.js';
 
 ### Business rules (from pitch)
 
-| Rule | Detail |
-| --- | --- |
-| Who can report | Any authenticated user (tenant, agent, landlord) |
-| Targets | `listing` or `user` (polymorphic) |
-| Cannot report yourself | If `targetType === 'user'` and `targetId === reporterId` → **400** |
-| Target must exist | Validate listing/user row exists (and not soft-deleted) |
-| Initial status | `open` |
-| Status changes | Admin only (`under_review`, `resolved`, `dismissed`) — Shemaiah |
-| Status logs | `report_status_logs` — **optional on create**; admin creates logs on status change. MVP: **only insert `reports` row** on POST |
-| Reporter visibility | `GET /reports/me` — only rows where `reporterId = current user` |
-| Duplicate reports | Not specified — MVP allow multiple; optional: 409 if same reporter+target+reason within 24h |
+| Rule                   | Detail                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Who can report         | Any authenticated user (tenant, agent, landlord)                                                                               |
+| Targets                | `listing` or `user` (polymorphic)                                                                                              |
+| Cannot report yourself | If `targetType === 'user'` and `targetId === reporterId` → **400**                                                             |
+| Target must exist      | Validate listing/user row exists (and not soft-deleted)                                                                        |
+| Initial status         | `open`                                                                                                                         |
+| Status changes         | Admin only (`under_review`, `resolved`, `dismissed`) — Shemaiah                                                                |
+| Status logs            | `report_status_logs` — **optional on create**; admin creates logs on status change. MVP: **only insert `reports` row** on POST |
+| Reporter visibility    | `GET /reports/me` — only rows where `reporterId = current user`                                                                |
+| Duplicate reports      | Not specified — MVP allow multiple; optional: 409 if same reporter+target+reason within 24h                                    |
 
 ### Database tables
 
 **`reports`:**
 
-| Column | Notes |
-| --- | --- |
-| reporterId | current user |
-| targetType | `listing` \| `user` |
-| targetId | uuid (no FK — polymorphic) |
-| reason | text |
-| status | default `open` |
-| createdAt | now |
-| deletedAt | soft delete (admin) |
+| Column     | Notes                      |
+| ---------- | -------------------------- |
+| reporterId | current user               |
+| targetType | `listing` \| `user`        |
+| targetId   | uuid (no FK — polymorphic) |
+| reason     | text                       |
+| status     | default `open`             |
+| createdAt  | now                        |
+| deletedAt  | soft delete (admin)        |
 
 **`report_status_logs`:** defer to admin module on status PATCH.
 
@@ -557,8 +557,8 @@ import { kycSubmissions, kycStatusLogs } from '../../db/schema/kyc.js';
 
 #### `POST /api/v1/reports`
 
-| | |
-| --- | --- |
+|      |        |
+| ---- | ------ |
 | Auth | Bearer |
 
 **Request body** (`createReportSchema`):
@@ -571,11 +571,11 @@ import { kycSubmissions, kycStatusLogs } from '../../db/schema/kyc.js';
 }
 ```
 
-| Field | Required |
-| --- | --- |
+| Field      | Required            |
+| ---------- | ------------------- |
 | targetType | `listing` or `user` |
-| targetId | uuid |
-| reason | non-empty string |
+| targetId   | uuid                |
+| reason     | non-empty string    |
 
 **Service logic (`report.create`):**
 
@@ -607,12 +607,12 @@ import { kycSubmissions, kycStatusLogs } from '../../db/schema/kyc.js';
 
 **Errors:**
 
-| Status | message |
-| --- | --- |
-| 400 | cannot report yourself |
-| 401 | unauthorized |
-| 404 | user not found / listing not found |
-| 422 | validation error |
+| Status | message                            |
+| ------ | ---------------------------------- |
+| 400    | cannot report yourself             |
+| 401    | unauthorized                       |
+| 404    | user not found / listing not found |
+| 422    | validation error                   |
 
 **Controller fix:** use `created(res, { report })`.
 
@@ -620,16 +620,16 @@ import { kycSubmissions, kycStatusLogs } from '../../db/schema/kyc.js';
 
 #### `GET /api/v1/reports/me`
 
-| | |
-| --- | --- |
+|      |        |
+| ---- | ------ |
 | Auth | Bearer |
 
 **Query params (optional MVP):**
 
 | Param | Default | Max |
-| --- | --- | --- |
-| page | 1 | — |
-| limit | 20 | 50 |
+| ----- | ------- | --- |
+| page  | 1       | —   |
+| limit | 20      | 50  |
 
 Add Zod schema in `report.schema.ts` if you add pagination:
 
@@ -856,14 +856,14 @@ curl -s -X POST http://localhost:3000/api/v1/reports \
 
 ## Reference files
 
-| What | Path |
-| --- | --- |
-| Working module | `src/modules/auth/` |
-| User table | `src/db/schema/users.ts` |
-| KYC tables | `src/db/schema/kyc.ts` |
-| Reports tables | `src/db/schema/reports.ts` |
-| Listings (existence check only) | `src/db/schema/listings.ts` |
-| Pitch / product rules | `docs/RentWise Pitch.md` §2.2, §2.17, §4.2–4.3, §4.8 |
-| Shipping order | `docs/MODULE-DEPENDENCIES.md` Wave 1 |
+| What                            | Path                                                 |
+| ------------------------------- | ---------------------------------------------------- |
+| Working module                  | `src/modules/auth/`                                  |
+| User table                      | `src/db/schema/users.ts`                             |
+| KYC tables                      | `src/db/schema/kyc.ts`                               |
+| Reports tables                  | `src/db/schema/reports.ts`                           |
+| Listings (existence check only) | `src/db/schema/listings.ts`                          |
+| Pitch / product rules           | `docs/RentWise Pitch.md` §2.2, §2.17, §4.2–4.3, §4.8 |
+| Shipping order                  | `docs/MODULE-DEPENDENCIES.md` Wave 1                 |
 
 Good luck — ship one module at a time: **user → kyc → reports**.

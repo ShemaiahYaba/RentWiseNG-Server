@@ -16,9 +16,11 @@ export const userRouter: Router = Router();
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Current user
+ *         description: Current user profile returned successfully
  *       401:
- *         description: Unauthorized
+ *         description: Missing or invalid bearer token
+ *       404:
+ *         description: User not found
  */
 userRouter.get('/me', authenticate, userController.getMe);
 
@@ -40,10 +42,14 @@ userRouter.get('/me', authenticate, userController.getMe);
  *               phone: { type: string }
  *     responses:
  *       200:
- *         description: Updated user
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Validation error, no fields provided or invalid values
  *       401:
- *         description: Unauthorized
- *       501:
- *         description: Not implemented (Phase 2)
+ *         description: Missing or invalid bearer token
+ *       404:
+ *         description: User not found
+ *       409:
+ *         description: Phone number already in use by another account
  */
 userRouter.patch('/me', authenticate, validate(updateMeSchema), userController.updateMe);

@@ -4,15 +4,6 @@ import { kycSubmissions } from '@/db/schema/kyc.js';
 
 export type KycRecord = typeof kycSubmissions.$inferSelect;
 
-export type CreateKycInput = {
-  userId: string;
-  documentType: string;
-  documentNumber: string;
-  documentFrontUrl: string;
-  documentBackUrl?: string;
-  selfieUrl?: string;
-};
-
 export const kycRepo = {
   async findByUserId(_userId: string): Promise<KycRecord | undefined> {
     const [row] = await db

@@ -1,12 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
 import { kycService } from './kyc.service.js';
-import { ok } from '@/lib/response.js';
+import { ok, created } from '@/lib/response.js';
 
 export const kycController = {
   async submit(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const submission = await kycService.submit(req.user!.id, req.body);
-      ok(res, { submission });
+      created(res, { submission });
     } catch (err) {
       next(err);
     }

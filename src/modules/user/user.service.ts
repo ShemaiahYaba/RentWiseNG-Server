@@ -13,7 +13,7 @@ export const userService = {
   },
 
   async updateMe(_userId: string, _data: Partial<{ fullName: string; phone: string }>) {
-    const existing = await authRepo.findById(_userId);
+    const existing = await userRepo.findById(_userId);
     if (!existing) {
       throw new AppError('user not found', 404);
     }

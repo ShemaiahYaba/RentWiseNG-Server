@@ -1,11 +1,11 @@
 import { AppError } from '@/lib/errors.js';
 import { kycRepo } from './kyc.repo.js';
-import { SubmitKycInput } from './kyc.schema.js';
+import type { SubmitKycInput } from './kyc.schema.js';
 
 export const kycService = {
   async submit(_userId: string, _data: SubmitKycInput) {
     const existing = await kycRepo.findByUserId(_userId);
-    if (existing && (existing.status == 'pending' || existing.status === 'approved')) {
+    if (existing && (existing.status === 'pending' || existing.status === 'approved')) {
       throw new AppError(`KYC submission already ${existing.status}`, 409);
     }
 
