@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { reviewController } from './review.controller.js';
 import { createReviewSchema } from './review.schema.js';
 
-export const reviewRouter = Router();
+export const reviewRouter: ExpressRouter = Router();
 
 /**
  * @swagger

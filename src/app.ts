@@ -6,6 +6,7 @@ import { getAllowedOrigins } from './config/env.js';
 import { initSentry, Sentry } from './config/sentry.js';
 import { isSwaggerEnabled, swaggerSpec } from './config/swagger.js';
 import { requestContextMiddleware } from './context/requestContext.js';
+import type { Express } from 'express';
 import { ok } from './lib/response.js';
 import { defaultRateLimiter } from './middleware/rateLimiter.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -24,7 +25,7 @@ import { userRouter } from './modules/user/user.routes.js';
 
 initSentry();
 
-export const app = express();
+export const app: Express = express();
 
 app.use(helmet());
 app.use(

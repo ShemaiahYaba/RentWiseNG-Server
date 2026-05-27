@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { auditLogController } from './auditLog.controller.js';
 import { auditLogQuerySchema } from './auditLog.schema.js';
 
-export const auditLogRouter = Router();
+export const auditLogRouter: ExpressRouter = Router();
 
 /**
  * @swagger

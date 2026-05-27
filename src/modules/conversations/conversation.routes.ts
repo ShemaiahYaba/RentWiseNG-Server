@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { conversationController } from './conversation.controller.js';
 import { startConversationSchema } from './conversation.schema.js';
 
-export const conversationRouter = Router();
+export const conversationRouter: ExpressRouter = Router();
 
 /**
  * @swagger

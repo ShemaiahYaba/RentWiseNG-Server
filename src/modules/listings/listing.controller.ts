@@ -7,7 +7,7 @@ import { listingService } from './listing.service.js';
 export const listingController = {
   async search(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await listingService.search(req.query as ListingSearchInput);
+      const result = await listingService.search(req.query as unknown as ListingSearchInput);
       ok(res, result);
     } catch (err) {
       next(err);

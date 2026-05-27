@@ -1,11 +1,11 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { paymentController } from './payment.controller.js';
 import { initiatePaymentSchema } from './payment.schema.js';
 
-export const paymentRouter = Router();
+export const paymentRouter: ExpressRouter = Router();
 
 /**
  * @swagger

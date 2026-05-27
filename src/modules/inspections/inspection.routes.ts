@@ -1,11 +1,11 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { inspectionController } from './inspection.controller.js';
 import { bookInspectionSchema, updateInspectionStatusSchema } from './inspection.schema.js';
 
-export const inspectionRouter = Router();
+export const inspectionRouter: ExpressRouter = Router();
 
 /**
  * @swagger
