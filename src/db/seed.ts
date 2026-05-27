@@ -1,13 +1,70 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
+import { and, eq, isNull } from 'drizzle-orm';
 import { sql } from '@/config/db.js';
+import { db } from '@/config/db.js';
+import { systemConfig } from '@/db/schema/auditLogs.js';
+import { apartmentTypes, locations } from '@/db/schema/listings.js';
+import { users } from '@/db/schema/users.js';
 
 const SALT_ROUNDS = 12;
 
-async function seed() {
-  console.log('Seeding Database');
+const APARTMENT_TYPE_LABELS = [
+  'self_contain',
+  'one_bedroom',
+  'two_bedroom',
+  'flat',
+  'duplex',
+  'bungalow',
+] as const;
 
+const LOCATION_ROWS: { state: string; city: string; area: string }[] = [
+  { state: 'Lagos', city: 'Lagos', area: 'Lekki Phase 1' },
+  { state: 'Lagos', city: 'Lagos', area: 'Yaba' },
+  { state: 'Lagos', city: 'Lagos', area: 'Ikeja GRA' },
+  { state: 'Lagos', city: 'Lagos', area: 'Surulere' },
+  { state: 'Lagos', city: 'Lagos', area: 'Victoria Island' },
+  { state: 'Abuja', city: 'Abuja', area: 'Maitama' },
+  { state: 'Abuja', city: 'Abuja', area: 'Gwarinpa' },
+  { state: 'Abuja', city: 'Abuja', area: 'Wuse 2' },
+  { state: 'Rivers', city: 'Port Harcourt', area: 'GRA Phase 2' },
+  { state: 'Oyo', city: 'Ibadan', area: 'Bodija' },
+];
+
+const SYSTEM_CONFIG_ROWS: {
+  key: string;
+  value: string;
+  description: string;
+}[] = [
+  {
+    key: 'payment_release_window_hours',
+    value: '48',
+    description: 'Hours after inspection before auto-release',
+  },
+  {
+    key: 'max_listing_photos',
+    value: '10',
+    description: 'Maximum photos per listing',
+  },
+  {
+    key: 'inspection_advance_booking_days',
+    value: '3',
+    description: 'Minimum days ahead for inspection booking',
+  },
+  {
+    key: 'kyc_required_for_listing',
+    value: 'true',
+    description: 'Require approved KYC before creating listings',
+  },
+  {
+    key: 'max_active_listings_per_agent',
+    value: '20',
+    description: 'Maximum active listings per agent',
+  },
+];
+
+async function seedUsers() {
   const accounts = [
     {
       role: 'admin',
@@ -54,7 +111,7 @@ async function seed() {
       const id = randomUUID();
       const now = new Date().toISOString();
 
-      const result = await sql`
+      await sql`
         INSERT INTO users (
           id,
           role,
@@ -85,7 +142,6 @@ async function seed() {
 
       console.log(`Seeding: ${account.email} (${account.role})`);
     } catch (error) {
-      // Handle duplicate email/phone errors gracefully
       if (
         error instanceof Error &&
         (error.message.includes('unique') || error.message.includes('already exists'))
@@ -96,7 +152,82 @@ async function seed() {
       }
     }
   }
+}
 
+async function seedPlatformData() {
+  const [admin] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, 'admin@rentwiseng.com'))
+    .limit(1);
+
+  if (!admin) {
+    console.log('Skipping platform seed: admin user not found');
+    return;
+  }
+
+  for (const label of APARTMENT_TYPE_LABELS) {
+    try {
+      await db.insert(apartmentTypes).values({ label });
+      console.log(`Seeding apartment type: ${label}`);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('unique')) {
+        console.log(`Skipping apartment type: ${label} - already exists`);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  for (const row of LOCATION_ROWS) {
+    const existing = await db
+      .select({ id: locations.id })
+      .from(locations)
+      .where(
+        and(
+          eq(locations.state, row.state),
+          eq(locations.city, row.city),
+          eq(locations.area, row.area),
+          isNull(locations.deletedAt),
+        ),
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      console.log(`Skipping location: ${row.area}, ${row.city}`);
+      continue;
+    }
+
+    await db.insert(locations).values(row);
+    console.log(`Seeding location: ${row.area}, ${row.city}`);
+  }
+
+  for (const row of SYSTEM_CONFIG_ROWS) {
+    const existing = await db
+      .select({ id: systemConfig.id })
+      .from(systemConfig)
+      .where(eq(systemConfig.key, row.key))
+      .limit(1);
+
+    if (existing.length > 0) {
+      console.log(`Skipping system config: ${row.key}`);
+      continue;
+    }
+
+    await db.insert(systemConfig).values({
+      key: row.key,
+      value: row.value,
+      description: row.description,
+      updatedBy: admin.id,
+    });
+    console.log(`Seeding system config: ${row.key}`);
+  }
+}
+
+async function seed() {
+  console.log('Seeding Database');
+  await seedUsers();
+  await seedPlatformData();
   console.log('Seeding complete');
   process.exit(0);
 }

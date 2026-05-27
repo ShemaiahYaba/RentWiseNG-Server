@@ -89,15 +89,15 @@ flowchart TB
 
 | Done | Task | Deliverable |
 | --- | --- | --- |
-| [ ] | Seed `locations` + `apartment_types` (script or SQL) | seed script / migration data |
-| [ ] | Seed `system_config` defaults from pitch | `system_config` rows |
-| [ ] | Shared helper: read `system_config` key | e.g. `src/lib/systemConfig.ts` |
-| [ ] | **listings** — `GET /listings` search + filter (public) | `GET /api/v1/listings` |
-| [ ] | **listings** — `GET /listings/:id` detail (public) | `GET /api/v1/listings/:id` |
-| [ ] | **listings** — `POST /listings` create (agent \| landlord), optional KYC gate | `POST /api/v1/listings` |
-| [ ] | **listings** — `PATCH` / `DELETE` owner-only + soft delete | `PATCH`, `DELETE /api/v1/listings/:id` |
-| [ ] | **listings** — photos + `listing_photos` | R2 upload or URL MVP |
-| [ ] | **listings** — verification status + `listing_verification_logs` on create | internal status machine |
+| [x] | Seed `locations` + `apartment_types` (script or SQL) | seed script / migration data |
+| [x] | Seed `system_config` defaults from pitch | `system_config` rows |
+| [x] | Shared helper: read `system_config` key | e.g. `src/lib/systemConfig.ts` |
+| [x] | **listings** — `GET /listings` search + filter (public) | `GET /api/v1/listings` |
+| [x] | **listings** — `GET /listings/:id` detail (public) | `GET /api/v1/listings/:id` |
+| [x] | **listings** — `POST /listings` create (agent \| landlord), optional KYC gate | `POST /api/v1/listings` |
+| [x] | **listings** — `PATCH` / `DELETE` owner-only + soft delete | `PATCH`, `DELETE /api/v1/listings/:id` |
+| [x] | **listings** — photos + `listing_photos` | R2 presign + URL in create body |
+| [x] | **listings** — verification status (admin logs on review) | `listing_verification_logs` |
 
 **Wave 1 sync:** Samuel needs KYC **status values** agreed (`pending`, `approved`, etc.). Shemaiah exposes whether `kyc_required_for_listing` is enforced on create listing.
 
@@ -126,10 +126,10 @@ flowchart TB
 | [ ] | **inspections** — `GET /inspections/me` tenant + owner views | `GET /api/v1/inspections/me` |
 | [ ] | **inspections** — `PATCH /inspections/:id/status` confirm \| cancel | `PATCH /api/v1/inspections/:id/status` |
 | [ ] | **inspections** — `inspection_status_logs` on each transition | DB writes |
-| [ ] | **admin** — `GET /admin/verification-queue/listings` | admin route |
-| [ ] | **admin** — `PATCH /admin/verification-queue/listings/:id` verified \| limited \| rejected | admin route |
-| [ ] | **admin** — `GET /admin/verification-queue/kyc` | admin route |
-| [ ] | **admin** — `PATCH /admin/verification-queue/kyc/:id` approve \| reject | admin route |
+| [x] | **admin** — `GET /admin/verification-queue/listings` | admin route |
+| [x] | **admin** — `PATCH /admin/verification-queue/listings/:id` verified \| limited \| rejected | admin route |
+| [x] | **admin** — `GET /admin/verification-queue/kyc` | admin route |
+| [x] | **admin** — `PATCH /admin/verification-queue/kyc/:id` approve \| reject | admin route |
 
 **Wave 2 sync:** Samuel tests conversations against real `listing_id` from Shemaiah’s seed data.
 

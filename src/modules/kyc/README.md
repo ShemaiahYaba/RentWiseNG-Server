@@ -11,6 +11,10 @@ Owns identity document submission and status for agents and landlords.
 
 ## Status machine
 
-`pending` → `approved` | `rejected` (admin action; transitions logged in `kyc_status_logs`).
+`pending` → `approved` | `rejected` (admin action via `/admin/verification-queue/kyc/:id`; transitions logged in `kyc_status_logs`).
 
-**Phase 2:** R2 upload integration, encryption for `document_number`, admin queue wiring.
+## Document uploads
+
+Submit HTTPS URLs in the request body, or use `POST /api/v1/media/presign` with `purpose: kyc_document` to upload to R2 first.
+
+**Backlog:** encryption for `document_number` (see [OPEN-ISSUES.md](../../../docs/OPEN-ISSUES.md)).

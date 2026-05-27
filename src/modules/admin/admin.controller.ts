@@ -1,35 +1,53 @@
 import type { NextFunction, Request, Response } from 'express';
+import { routeParam } from '@/lib/routeParams.js';
+import { ok } from '@/lib/response.js';
 import { adminService } from './admin.service.js';
 
 export const adminController = {
-  async listingQueue(_req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async listingQueue(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.listingQueue();
+      const result = await adminService.listingQueue();
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
+
   async updateListing(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.updateListingVerification(req.user!.id, req.params.id, req.body.status);
+      const result = await adminService.updateListingVerification(
+        req.user!.id,
+        routeParam(req.params.id),
+        req.body,
+      );
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
-  async kycQueue(_req: Request, _res: Response, next: NextFunction): Promise<void> {
+
+  async kycQueue(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.kycQueue();
+      const result = await adminService.kycQueue();
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
+
   async updateKyc(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.updateKyc(req.user!.id, req.params.id, req.body.status);
+      const result = await adminService.updateKyc(
+        req.user!.id,
+        routeParam(req.params.id),
+        req.body,
+      );
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
+
   async listReports(_req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
       await adminService.listReports();
@@ -37,20 +55,27 @@ export const adminController = {
       next(err);
     }
   },
-  async updateReport(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+  async updateReport(req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.updateReportStatus(req.user!.id, req.params.id, req.body.status);
+      await adminService.updateReportStatus(
+        req.user!.id,
+        routeParam(req.params.id),
+        req.body.status,
+      );
     } catch (err) {
       next(err);
     }
   },
-  async listAuditLogs(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+  async listAuditLogs(req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
       await adminService.listAuditLogs(req.query);
     } catch (err) {
       next(err);
     }
   },
+
   async listConfig(_req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
       await adminService.listConfig();
@@ -58,9 +83,14 @@ export const adminController = {
       next(err);
     }
   },
-  async updateConfig(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+  async updateConfig(req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.updateConfig(req.user!.id, req.params.key, req.body.value);
+      await adminService.updateConfig(
+        req.user!.id,
+        routeParam(req.params.key),
+        req.body.value,
+      );
     } catch (err) {
       next(err);
     }

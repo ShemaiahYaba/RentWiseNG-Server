@@ -16,6 +16,7 @@ import { conversationRouter } from './modules/conversations/conversation.routes.
 import { inspectionRouter } from './modules/inspections/inspection.routes.js';
 import { kycRouter } from './modules/kyc/kyc.routes.js';
 import { listingRouter } from './modules/listings/listing.routes.js';
+import { mediaRouter } from './modules/media/media.routes.js';
 import { paymentRouter } from './modules/payments/payment.routes.js';
 import { reportRouter } from './modules/reports/report.routes.js';
 import { reviewRouter } from './modules/reviews/review.routes.js';
@@ -46,6 +47,7 @@ api.use('/auth', authRouter);
 api.use('/users', userRouter);
 api.use('/kyc', kycRouter);
 api.use('/listings', listingRouter);
+api.use('/media', mediaRouter);
 api.use('/inspections', inspectionRouter);
 api.use('/payments', paymentRouter);
 api.use('/conversations', conversationRouter);

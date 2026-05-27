@@ -18,3 +18,6 @@ export const reportStatusSchema = z.object({
 export const configUpdateSchema = z.object({
   value: z.string().min(1),
 });
+
+export type VerificationStatusInput = z.infer<typeof verificationStatusSchema>;
+export type KycDecisionInput = z.infer<typeof kycDecisionSchema>;

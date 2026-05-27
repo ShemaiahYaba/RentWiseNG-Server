@@ -27,4 +27,13 @@ export const kycRepo = {
       .set({ deletedAt: new Date(), deletedBy })
       .where(eq(kycSubmissions.id, id));
   },
+
+  async findById(id: string): Promise<KycRecord | undefined> {
+    const [row] = await db
+      .select()
+      .from(kycSubmissions)
+      .where(and(eq(kycSubmissions.id, id), isNull(kycSubmissions.deletedAt)))
+      .limit(1);
+    return row;
+  },
 };

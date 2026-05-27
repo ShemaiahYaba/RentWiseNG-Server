@@ -10,7 +10,7 @@ import {
   verificationStatusSchema,
 } from './admin.schema.js';
 
-export const adminRouter = Router();
+export const adminRouter: Router = Router();
 
 adminRouter.use(authenticate, requireRole('admin'));
 
@@ -23,8 +23,12 @@ adminRouter.use(authenticate, requireRole('admin'));
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Pending listings queue
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 adminRouter.get('/verification-queue/listings', adminController.listingQueue);
 
@@ -36,9 +40,20 @@ adminRouter.get('/verification-queue/listings', adminController.listingQueue);
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Listing verification updated
+ *       404:
+ *         description: Listing not found
+ *       409:
+ *         description: Listing not pending
+ *       422:
+ *         description: Validation error
  */
 adminRouter.patch(
   '/verification-queue/listings/:id',
@@ -55,8 +70,12 @@ adminRouter.patch(
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Pending KYC queue
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 adminRouter.get('/verification-queue/kyc', adminController.kycQueue);
 
@@ -68,9 +87,20 @@ adminRouter.get('/verification-queue/kyc', adminController.kycQueue);
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: KYC decision recorded
+ *       404:
+ *         description: Submission not found
+ *       409:
+ *         description: Submission not pending
+ *       422:
+ *         description: Validation error (e.g. missing rejectionReason)
  */
 adminRouter.patch(
   '/verification-queue/kyc/:id',

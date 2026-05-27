@@ -1,6 +1,6 @@
 {
   "name": "rentwise-server",
-  "version": "0.1.0",
+  "version": "0.6.0",
   "description": "RentWise API — Team Neon, TechCrush Buildathon 2026",
   "type": "module",
   "main": "dist/server.js",
@@ -24,6 +24,8 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1053.0",
+    "@aws-sdk/s3-request-presigner": "^3.1053.0",
     "@neondatabase/serverless": "0.10.2",
     "@sentry/node": "9.47.1",
     "bcryptjs": "3.0.3",
