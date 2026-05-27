@@ -43,13 +43,13 @@ userRouter.get('/me', authenticate, userController.getMe);
  *     responses:
  *       200:
  *         description: Profile updated successfully
- *       400:
- *         description: Validation error, no fields provided or invalid values
  *       401:
  *         description: Missing or invalid bearer token
  *       404:
  *         description: User not found
  *       409:
  *         description: Phone number already in use by another account
+ *       422:
+ *         description: Validation error
  */
 userRouter.patch('/me', authenticate, validate(updateMeSchema), userController.updateMe);

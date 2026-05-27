@@ -38,11 +38,15 @@ export const reportRouter: Router = Router();
  *       201:
  *         description: Report filed successfully
  *       400:
- *         description: Validation error or self-report attempt
+ *         description: Self-report attempt
  *       401:
  *         description: Missing or invalid bearer token
+ *       404:
+ *         description: Target user or listing not found
  *       409:
  *         description: An open report already exists for this target
+ *       422:
+ *         description: Validation error
  */
 reportRouter.post('/', authenticate, validate(createReportSchema), reportController.create);
 

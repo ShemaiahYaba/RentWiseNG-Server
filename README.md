@@ -83,6 +83,8 @@ src/
 
 Full API build order, Samuel vs Shemaiah ownership, parallel waves: **[docs/MODULE-DEPENDENCIES.md](docs/MODULE-DEPENDENCIES.md)**.
 
+Post-MVP polish and known deferrals: **[docs/OPEN-ISSUES.md](docs/OPEN-ISSUES.md)**.
+
 ## Module ownership map
 
 | Module | Owner focus | Phase |

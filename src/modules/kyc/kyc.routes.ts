@@ -43,14 +43,14 @@ export const kycRouter: Router = Router();
  *     responses:
  *       201:
  *         description: KYC submission created successfully
- *       400:
- *         description: Validation error: missing or invalid fields
  *       401:
  *         description: Missing or invalid bearer token
  *       403:
  *         description: Forbidden: only agents and landlords can submit KYC
  *       409:
  *         description: KYC submission already pending or approved
+ *       422:
+ *         description: Validation error
  */
 kycRouter.post(
   '/',

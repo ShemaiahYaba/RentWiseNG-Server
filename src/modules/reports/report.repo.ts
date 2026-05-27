@@ -1,4 +1,5 @@
 import { reports } from '@/db/schema/reports.js';
+import { listings } from '@/db/schema/listings.js';
 import type { CreateReportInput } from './report.schema.js';
 import { db } from '@/config/db.js';
 import { and, eq, isNull } from 'drizzle-orm';
@@ -12,6 +13,7 @@ export const reportRepo = {
     const [row] = await db.insert(reports).values(_data).returning();
     return row;
   },
+
   async listByReporter(_reporterId: string): Promise<ReportRecord[]> {
     return db
       .select()
@@ -19,6 +21,7 @@ export const reportRepo = {
       .where(and(eq(reports.reporterId, _reporterId), isNull(reports.deletedAt)))
       .orderBy(reports.createdAt);
   },
+
   async findDuplicate(
     _reporterId: string,
     _targetId: string,
@@ -39,5 +42,14 @@ export const reportRepo = {
       .limit(1);
 
     return row;
+  },
+
+  async existsListing(listingId: string): Promise<boolean> {
+    const [row] = await db
+      .select({ id: listings.id })
+      .from(listings)
+      .where(and(eq(listings.id, listingId), isNull(listings.deletedAt)))
+      .limit(1);
+    return Boolean(row);
   },
 };
