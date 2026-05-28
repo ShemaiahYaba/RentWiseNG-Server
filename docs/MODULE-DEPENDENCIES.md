@@ -75,15 +75,15 @@ flowchart TB
 
 | Done | Task | Route / deliverable |
 | --- | --- | --- |
-| [ ] | **user** — `GET /users/me` return safe profile (no password) | `GET /api/v1/users/me` |
-| [ ] | **user** — `PATCH /users/me` update name / phone rules | `PATCH /api/v1/users/me` |
-| [ ] | **user** — repo methods if moving off `authRepo` only | `user.repo.ts` |
-| [ ] | **kyc** — `POST /kyc` submit documents (URLs or placeholders until R2) | `POST /api/v1/kyc` |
-| [ ] | **kyc** — `GET /kyc/me` status + history | `GET /api/v1/kyc/me` |
+| [x] | **user** — `GET /users/me` return safe profile (no password) | `GET /api/v1/users/me` |
+| [x] | **user** — `PATCH /users/me` update name / phone rules | `PATCH /api/v1/users/me` |
+| [x] | **user** — repo methods if moving off `authRepo` only | `user.repo.ts` |
+| [x] | **kyc** — `POST /kyc` submit documents (URLs or placeholders until R2) | `POST /api/v1/kyc` |
+| [x] | **kyc** — `GET /kyc/me` status + history | `GET /api/v1/kyc/me` |
 | [ ] | **kyc** — status log row on submit / resubmit | `kyc_status_logs` |
-| [ ] | **reports** — `POST /reports` polymorphic target (user or listing id) | `POST /api/v1/reports` |
-| [ ] | **reports** — `GET /reports/me` reporter’s own reports | `GET /api/v1/reports/me` |
-| [ ] | Update module READMEs for user, kyc, reports | `src/modules/*/README.md` |
+| [x] | **reports** — `POST /reports` polymorphic target (user or listing id) | `POST /api/v1/reports` |
+| [x] | **reports** — `GET /reports/me` reporter’s own reports | `GET /api/v1/reports/me` |
+| [x] | Update module READMEs for user, kyc, reports | `src/modules/*/README.md` |
 
 ### Shemaiah — platform + listings prep
 
