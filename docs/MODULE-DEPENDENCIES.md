@@ -80,7 +80,7 @@ flowchart TB
 | [x] | **user** — repo methods if moving off `authRepo` only | `user.repo.ts` |
 | [x] | **kyc** — `POST /kyc` submit documents (URLs or placeholders until R2) | `POST /api/v1/kyc` |
 | [x] | **kyc** — `GET /kyc/me` status + history | `GET /api/v1/kyc/me` |
-| [ ] | **kyc** — status log row on submit / resubmit | `kyc_status_logs` |
+| [x] | **kyc** — status log row on submit / resubmit | `kyc_status_logs` |
 | [x] | **reports** — `POST /reports` polymorphic target (user or listing id) | `POST /api/v1/reports` |
 | [x] | **reports** — `GET /reports/me` reporter’s own reports | `GET /api/v1/reports/me` |
 | [x] | Update module READMEs for user, kyc, reports | `src/modules/*/README.md` |

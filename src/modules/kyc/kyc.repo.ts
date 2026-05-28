@@ -1,6 +1,6 @@
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { db } from '@/config/db.js';
-import { kycSubmissions } from '@/db/schema/kyc.js';
+import { kycStatusLogs, kycSubmissions } from '@/db/schema/kyc.js';
 
 export type KycRecord = typeof kycSubmissions.$inferSelect;
 
@@ -35,5 +35,21 @@ export const kycRepo = {
       .where(and(eq(kycSubmissions.id, id), isNull(kycSubmissions.deletedAt)))
       .limit(1);
     return row;
+  },
+
+  async createStatusLog(params: {
+    kycId: string;
+    fromStatus: string;
+    toStatus: string;
+    changedBy: string;
+    note?: string;
+  }): Promise<void> {
+    await db.insert(kycStatusLogs).values({
+      kycId: params.kycId,
+      fromStatus: params.fromStatus,
+      toStatus: params.toStatus,
+      changedBy: params.changedBy,
+      note: params.note,
+    });
   },
 };
