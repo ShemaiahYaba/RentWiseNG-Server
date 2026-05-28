@@ -17,6 +17,8 @@ import { conversationRouter } from './modules/conversations/conversation.routes.
 import { inspectionRouter } from './modules/inspections/inspection.routes.js';
 import { kycRouter } from './modules/kyc/kyc.routes.js';
 import { listingRouter } from './modules/listings/listing.routes.js';
+import { locationsRouter } from './modules/locations/locations.routes.js';
+import { apartmentTypesRouter } from './modules/apartmentTypes/apartmentTypes.routes.js';
 import { mediaRouter } from './modules/media/media.routes.js';
 import { paymentRouter } from './modules/payments/payment.routes.js';
 import { reportRouter } from './modules/reports/report.routes.js';
@@ -48,6 +50,8 @@ api.use('/auth', authRouter);
 api.use('/users', userRouter);
 api.use('/kyc', kycRouter);
 api.use('/listings', listingRouter);
+api.use('/locations', locationsRouter);
+api.use('/apartment-types', apartmentTypesRouter);
 api.use('/media', mediaRouter);
 api.use('/inspections', inspectionRouter);
 api.use('/payments', paymentRouter);

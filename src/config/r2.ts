@@ -6,7 +6,7 @@ import { AppError } from '@/lib/errors.js';
 
 const PRESIGN_EXPIRES_SECONDS = 900;
 
-function isR2Configured(): boolean {
+export function isR2Configured(): boolean {
   return Boolean(
     env.R2_ACCOUNT_ID &&
       env.R2_ACCESS_KEY_ID &&
