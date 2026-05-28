@@ -9,13 +9,13 @@ export const kycRouter: Router = Router();
 
 /**
  * @swagger
- * /kyc/:
+ * /kyc:
  *   post:
  *     summary: Submit KYC documents
  *     tags: [KYC]
  *     security:
  *       - bearerAuth: []
- *    requestBody:
+ *     requestBody:
  *       required: true
  *       content:
  *         application/json:
@@ -46,7 +46,7 @@ export const kycRouter: Router = Router();
  *       401:
  *         description: Missing or invalid bearer token
  *       403:
- *         description: Forbidden: only agents and landlords can submit KYC
+ *         description: "Forbidden: only agents and landlords can submit KYC"
  *       409:
  *         description: KYC submission already pending or approved
  *       422:
