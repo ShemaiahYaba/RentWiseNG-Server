@@ -1,6 +1,6 @@
 import { AppError } from '@/lib/errors.js';
 import { conversationRepo } from './conversation.repo.js';
-import {
+import type {
   MessageQueryInput,
   SendMessageInput,
   StartConversationInput,
