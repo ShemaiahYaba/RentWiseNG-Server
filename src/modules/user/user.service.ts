@@ -4,7 +4,7 @@ import { userRepo } from './user.repo.js';
 
 export const userService = {
   async getMe(userId: string) {
-    const user = await authRepo.findById(userId);
+    const user = await userRepo.findById(userId);
     if (!user) {
       throw new AppError('user not found', 404);
     }

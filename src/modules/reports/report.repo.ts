@@ -2,7 +2,7 @@ import { reports } from '@/db/schema/reports.js';
 import { listings } from '@/db/schema/listings.js';
 import type { CreateReportInput } from './report.schema.js';
 import { db } from '@/config/db.js';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 
 export type ReportRecord = typeof reports.$inferSelect;
 
@@ -19,7 +19,7 @@ export const reportRepo = {
       .select()
       .from(reports)
       .where(and(eq(reports.reporterId, _reporterId), isNull(reports.deletedAt)))
-      .orderBy(reports.createdAt);
+      .orderBy(desc(reports.createdAt));
   },
 
   async findDuplicate(
