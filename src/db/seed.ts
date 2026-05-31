@@ -5,7 +5,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { sql } from '@/config/db.js';
 import { db } from '@/config/db.js';
 import { systemConfig } from '@/db/schema/auditLogs.js';
-import { apartmentTypes, locations } from '@/db/schema/listings.js';
+import { apartmentTypes, listingPhotos, listings, locations } from '@/db/schema/listings.js';
 import { users } from '@/db/schema/users.js';
 
 const SALT_ROUNDS = 12;
@@ -224,10 +224,144 @@ async function seedPlatformData() {
   }
 }
 
+async function seedListings() {
+  const [agent] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, 'agent@rentwiseng.com'))
+    .limit(1);
+
+  if (!agent) {
+    console.log('Skipping listings seed: agent user not found');
+    return;
+  }
+
+  const locationRows = await db
+    .select({ id: locations.id, area: locations.area })
+    .from(locations)
+    .where(isNull(locations.deletedAt));
+
+  const apartmentTypeRows = await db
+    .select({ id: apartmentTypes.id, label: apartmentTypes.label })
+    .from(apartmentTypes)
+    .where(isNull(apartmentTypes.deletedAt));
+
+  if (locationRows.length === 0 || apartmentTypeRows.length === 0) {
+    console.log('Skipping listings seed: locations or apartment types not found');
+    return;
+  }
+
+  // Helper to find by name
+  const locationId = (area: string) => locationRows.find((l) => l.area === area)?.id;
+  const apartmentTypeId = (label: string) => apartmentTypeRows.find((a) => a.label === label)?.id;
+
+  const listingSeedData = [
+    {
+      title: '2 Bedroom Flat in Lekki Phase 1',
+      description: 'Spacious 2 bedroom flat with 24/7 power supply, water and good security.',
+      rentAmount: '2500000.00',
+      locationArea: 'Lekki Phase 1',
+      apartmentTypeLabel: 'two_bedroom',
+      ownershipDocUrl: 'https://example.com/docs/lekki-ownership.pdf',
+      photoUrls: ['https://example.com/photos/lekki-1.jpg'],
+    },
+    {
+      title: 'Self Contain in Yaba',
+      description: 'Clean self contain with kitchen and bathroom. Close to bus stop.',
+      rentAmount: '600000.00',
+      locationArea: 'Yaba',
+      apartmentTypeLabel: 'self_contain',
+      ownershipDocUrl: 'https://example.com/docs/yaba-ownership.pdf',
+      photoUrls: ['https://example.com/photos/yaba-1.jpg'],
+    },
+    {
+      title: 'Mini Flat in Surulere',
+      description: 'Neat mini flat in a quiet estate. Tiled floors, good ventilation.',
+      rentAmount: '900000.00',
+      locationArea: 'Surulere',
+      apartmentTypeLabel: 'one_bedroom',
+      ownershipDocUrl: 'https://example.com/docs/surulere-ownership.pdf',
+      photoUrls: ['https://example.com/photos/surulere-1.jpg'],
+    },
+    {
+      title: 'Duplex in Maitama Abuja',
+      description: 'Luxury 4 bedroom duplex with BQ, swimming pool and parking space.',
+      rentAmount: '8000000.00',
+      locationArea: 'Maitama',
+      apartmentTypeLabel: 'duplex',
+      ownershipDocUrl: 'https://example.com/docs/maitama-ownership.pdf',
+      photoUrls: ['https://example.com/photos/maitama-1.jpg'],
+    },
+    {
+      title: 'Bungalow in Bodija Ibadan',
+      description: '3 bedroom bungalow with large compound. Serene environment.',
+      rentAmount: '700000.00',
+      locationArea: 'Bodija',
+      apartmentTypeLabel: 'bungalow',
+      ownershipDocUrl: 'https://example.com/docs/bodija-ownership.pdf',
+      photoUrls: ['https://example.com/photos/bodija-1.jpg'],
+    },
+  ];
+
+  for (const data of listingSeedData) {
+    const locId = locationId(data.locationArea);
+    const aptId = apartmentTypeId(data.apartmentTypeLabel);
+
+    if (!locId || !aptId) {
+      console.log(`Skipping listing: ${data.title} - missing location or apartment type`);
+      continue;
+    }
+
+    // Check if listing already exists by title + owner
+    const existing = await db
+      .select({ id: listings.id })
+      .from(listings)
+      .where(
+        and(
+          eq(listings.title, data.title),
+          eq(listings.ownerId, agent.id),
+          isNull(listings.deletedAt),
+        ),
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      console.log(`Skipping listing: ${data.title} - already exists`);
+      continue;
+    }
+
+    const [listing] = await db
+      .insert(listings)
+      .values({
+        ownerId: agent.id,
+        locationId: locId,
+        apartmentTypeId: aptId,
+        title: data.title,
+        description: data.description,
+        rentAmount: data.rentAmount,
+        ownershipDocUrl: data.ownershipDocUrl,
+        verificationStatus: 'verified', // ← must be verified for smoke test
+        availabilityStatus: 'available',
+      })
+      .returning();
+
+    await db.insert(listingPhotos).values(
+      data.photoUrls.map((photoUrl, index) => ({
+        listingId: listing.id,
+        photoUrl,
+        sortOrder: index,
+      })),
+    );
+
+    console.log(`Seeding listing: ${data.title}`);
+  }
+}
+
 async function seed() {
   console.log('Seeding Database');
   await seedUsers();
   await seedPlatformData();
+  await seedListings();
   console.log('Seeding complete');
   process.exit(0);
 }

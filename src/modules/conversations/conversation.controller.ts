@@ -7,8 +7,8 @@ import { messageQuerySchema } from './conversation.schema.js';
 export const conversationController = {
   async list(req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
-      const conversation = await conversationService.list(req.user!.id);
-      ok(_res, { conversation });
+      const conversations = await conversationService.list(req.user!.id);
+      ok(_res, { conversations });
     } catch (err) {
       next(err);
     }
@@ -38,7 +38,9 @@ export const conversationController = {
 
       if (wasCreated) {
         created(_res, { conversation });
+        return;
       }
+
       ok(_res, { conversation });
     } catch (err) {
       next(err);
