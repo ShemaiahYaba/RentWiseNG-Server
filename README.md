@@ -7,6 +7,10 @@ Backend API for RentWise — Team Neon, TechCrush Alumni Buildathon 2026.
 - Node.js 20+
 - A [Neon](https://neon.tech) Postgres database (or compatible Postgres)
 
+## Deploy (Render)
+
+Docker on Render (dashboard): **[docs/DEPLOY-RENDER.md](docs/DEPLOY-RENDER.md)**.
+
 ## Local setup
 
 ```bash
