@@ -2,7 +2,11 @@ import { Router, type Router as ExpressRouter } from 'express';
 import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { conversationController } from './conversation.controller.js';
-import { sendMessageSchema, startConversationSchema } from './conversation.schema.js';
+import {
+  messageQuerySchema,
+  sendMessageSchema,
+  startConversationSchema,
+} from './conversation.schema.js';
 
 export const conversationRouter: ExpressRouter = Router();
 
@@ -76,7 +80,12 @@ conversationRouter.post(
  *       404:
  *         description: Conversation not found
  */
-conversationRouter.get('/:id/messages', authenticate, conversationController.getMessages);
+conversationRouter.get(
+  '/:id/messages',
+  authenticate,
+  validate(messageQuerySchema, 'query'),
+  conversationController.getMessages,
+);
 
 /**
  * @swagger

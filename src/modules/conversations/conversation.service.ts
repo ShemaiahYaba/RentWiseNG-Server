@@ -36,7 +36,7 @@ export const conversationService = {
 
     // Checking if listing exists
     const listing = await listingRepo.findById(_data.listingId);
-    if (!listing) {
+    if (!listing || listing.verificationStatus !== 'verified') {
       throw new AppError('Listing not found', 404);
     }
 
@@ -61,7 +61,7 @@ export const conversationService = {
   async sendMessage(_userId: string, _conversationId: string, _data: SendMessageInput) {
     const conversation = await conversationRepo.findById(_conversationId);
     if (!conversation) {
-      throw new AppError('conversation not found', 404);
+      throw new AppError('Conversation not found', 404);
     }
 
     const isParticipant =

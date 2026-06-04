@@ -2,15 +2,15 @@
 
 Items here are **not blockers** for the current MVP ship. Fix when convenient; track progress in this table.
 
-| ID     | Area    | Issue                                                               | Impact            | Suggested fix                                                                   | Owner    |
-| ------ | ------- | ------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------- | -------- |
-| OI-001 | seed    | [`src/db/seed.ts`](../src/db/seed.ts) inserts known dev credentials | Low (dev only)    | Document dev-only usage; guard with `NODE_ENV` or explicit `--force` flag later | Shemaiah |
-| OI-002 | reports | `listByReporter` orders oldest-first                                | Low UX            | Use `orderBy(desc(reports.createdAt))`                                          | Samuel   |
-| OI-003 | reports | Duplicate check only for `open` status                              | Low               | Optional time window / dedupe policy later                                      | —        |
-| OI-004 | kyc     | No `kyc_status_logs` row on submit                                  | Low               | Add log on submit or wire when admin module lands                               | Shemaiah |
-| OI-005 | user    | `getMe` uses `authRepo`, `updateMe` uses `userRepo`                 | Low               | Unify via `userRepo` when convenient                                            | Samuel   |
-| OI-006 | kyc     | `document_number` stored as plain text                              | Medium (pre-prod) | Encryption helper before production                                             | Shemaiah |
-| OI-007 | deps    | Neon client pinned at `@neondatabase/serverless@0.10.2`             | Low               | Re-evaluate upgrade to 1.x after MVP stable                                     | Shemaiah |
+| ID     | Area           | Issue                                                                                    | Impact            | Suggested fix                                                                                  | Owner    |
+| ------ | -------------- | ---------------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------- | -------- |
+| OI-001 | seed           | [`src/db/seed.ts`](../src/db/seed.ts) inserts known dev credentials                      | Low (dev only)    | Document dev-only usage; guard with `NODE_ENV` or explicit `--force` flag later                | Shemaiah |
+| OI-003 | reports        | Duplicate check only for `open` status                                                   | Low               | Optional time window / dedupe policy later                                                     | —        |
+| OI-006 | kyc            | `document_number` stored as plain text                                                   | Medium (pre-prod) | Encryption helper before production                                                          | Shemaiah |
+| OI-007 | deps           | Neon client pinned at `@neondatabase/serverless@0.10.2`                                  | Low               | Re-evaluate upgrade to 1.x after MVP stable                                                    | Shemaiah |
+| OI-010 | conversations  | Conversation list sorted by thread `createdAt`, not last message activity                | Low UX            | Join latest message timestamp or defer until WebSocket port                                    | Samuel   |
+| OI-014 | deploy         | Sentry Express ESM not pre-imported — instrumentation warning in Render logs             | Low               | Separate `--import` entry per [Sentry ESM guide](https://docs.sentry.io/platforms/javascript/guides/express/install/esm/) | Shemaiah |
+| OI-015 | deploy         | Render sometimes logs `env: "development"` despite production deploy                     | Low               | Set `NODE_ENV=production` in Render service env                                                | Shemaiah |
 
 ## How to use
 
@@ -19,8 +19,14 @@ Items here are **not blockers** for the current MVP ship. Fix when convenient; t
 
 ## Resolved
 
-| ID     | Resolved                            | PR / notes |
-| ------ | ----------------------------------- | ---------- |
-| —      | —                                   | —          |
-| OI-002 | `listByReport` is now olderst-first | ------     |
-| OI-005 | `getMe` now uses userRepo           | ------     |
+| ID     | Resolved | PR / notes |
+| ------ | -------- | ---------- |
+| OI-002 | 2026-06-04 | `listByReporter` now orders newest-first (`desc(createdAt)`) |
+| OI-004 | 2026-06-04 | `kyc_status_logs` written on submit/resubmit in `kyc.service.ts` |
+| OI-005 | 2026-06-04 | `getMe` unified via `userRepo` |
+| OI-008 | 2026-06-04 | Messages response: `{ messages, pagination }` at top level of `data` |
+| OI-009 | 2026-06-04 | `validate(messageQuerySchema, 'query')` on GET messages route |
+| OI-011 | 2026-06-04 | Start conversation gated on `verificationStatus === 'verified'` |
+| OI-012 | 2026-06-04 | `conversations/README.md` paths and REST/WS section cleaned up |
+| OI-013 | 2026-06-04 | `app.set('trust proxy', 1)` before rate limiter |
+| —      | 2026-06-04 | Build deploy: `@/` path alias resolved via `tsc-alias` in Docker build (was `ERR_MODULE_NOT_FOUND`) |

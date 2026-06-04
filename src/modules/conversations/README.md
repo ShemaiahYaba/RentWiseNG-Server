@@ -13,12 +13,15 @@ Owns listing-scoped chat between tenants and agents/landlords.
 
 ## REST vs WebSocket
 
-- **REST (this module):** conversation list, history, start thread, send Message.
+- **REST (this module):** conversation list, history, start thread, send message.
+- **WebSocket (later):** real-time message delivery and read receipts — see Wave 5 in `docs/MODULE-DEPENDENCIES.md`.
 
-- **WebSocket (Phase 2+):** real-time message delivery and read receipts.
+## Idempotency — `POST /conversations`
 
-## Idempotency - POST /conversation
+If a conversation already exists for the same `(listingId, participantOne, participantTwo)` pair, the existing conversation is returned with **200**. A new conversation returns **201**.
 
-If a conversation already exists for the same `(listingId, participantOne, participantTwo)` pair, the existing conversation is returned with 200. A new conversation returns 201.
+Only **verified** listings can be used to start a thread (same rule as public search).
 
-**Phase 2:** WebSocket server, message send endpoint or socket events.
+## Known gaps (see `docs/OPEN-ISSUES.md`)
+
+- List sorted by thread `createdAt`, not last message activity (OI-010).

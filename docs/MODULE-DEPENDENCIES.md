@@ -111,11 +111,11 @@ flowchart TB
 
 | Done | Task | Route |
 | --- | --- | --- |
-| [ ] | **conversations** — `POST /conversations` start thread for a listing | `POST /api/v1/conversations` |
-| [ ] | **conversations** — `GET /conversations` list for current user | `GET /api/v1/conversations` |
-| [ ] | **conversations** — `GET /conversations/:id/messages` paginated history | `GET /api/v1/conversations/:id/messages` |
-| [ ] | **conversations** — send message (if not separate WS): optional `POST` message | or defer to Shemaiah WS |
-| [ ] | README: REST vs WebSocket split documented | `conversations/README.md` |
+| [x] | **conversations** — `POST /conversations` start thread for a listing | `POST /api/v1/conversations` |
+| [x] | **conversations** — `GET /conversations` list for current user | `GET /api/v1/conversations` |
+| [x] | **conversations** — `GET /conversations/:id/messages` paginated history | `GET /api/v1/conversations/:id/messages` |
+| [x] | **conversations** — send message (REST MVP; WS deferred) | `POST /api/v1/conversations/:id/messages` |
+| [x] | README: REST vs WebSocket split documented | `conversations/README.md` |
 
 ### Shemaiah — `inspections` + `admin` (listing/KYC queues)
 
@@ -209,25 +209,25 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [~] | GET | `/users/me` | S — partial (`getMe` works) |
-| [ ] | PATCH | `/users/me` | S |
+| [x] | GET | `/users/me` | S |
+| [x] | PATCH | `/users/me` | S |
 
 ### KYC (S)
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | POST | `/kyc` | S |
-| [ ] | GET | `/kyc/me` | S |
+| [x] | POST | `/kyc` | S |
+| [x] | GET | `/kyc/me` | S |
 
 ### Listings (H)
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | GET | `/listings` | H |
-| [ ] | GET | `/listings/:id` | H |
-| [ ] | POST | `/listings` | H |
-| [ ] | PATCH | `/listings/:id` | H |
-| [ ] | DELETE | `/listings/:id` | H |
+| [x] | GET | `/listings` | H |
+| [x] | GET | `/listings/:id` | H |
+| [x] | POST | `/listings` | H |
+| [x] | PATCH | `/listings/:id` | H |
+| [x] | DELETE | `/listings/:id` | H |
 
 ### Inspections (H)
 
@@ -252,17 +252,18 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | GET | `/conversations` | S |
-| [ ] | POST | `/conversations` | S |
-| [ ] | GET | `/conversations/:id/messages` | S |
+| [x] | GET | `/conversations` | S |
+| [x] | POST | `/conversations` | S |
+| [x] | GET | `/conversations/:id/messages` | S |
+| [x] | POST | `/conversations/:id/messages` | S |
 | [ ] | WS | real-time delivery | H |
 
 ### Reports (S)
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | POST | `/reports` | S |
-| [ ] | GET | `/reports/me` | S |
+| [x] | POST | `/reports` | S |
+| [x] | GET | `/reports/me` | S |
 
 ### Reviews (S — after payments)
 
@@ -281,10 +282,10 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | GET | `/admin/verification-queue/listings` | H |
-| [ ] | PATCH | `/admin/verification-queue/listings/:id` | H |
-| [ ] | GET | `/admin/verification-queue/kyc` | H |
-| [ ] | PATCH | `/admin/verification-queue/kyc/:id` | H |
+| [x] | GET | `/admin/verification-queue/listings` | H |
+| [x] | PATCH | `/admin/verification-queue/listings/:id` | H |
+| [x] | GET | `/admin/verification-queue/kyc` | H |
+| [x] | PATCH | `/admin/verification-queue/kyc/:id` | H |
 | [ ] | GET | `/admin/reports` | H |
 | [ ] | PATCH | `/admin/reports/:id/status` | H |
 | [ ] | GET | `/admin/audit-logs` | H |

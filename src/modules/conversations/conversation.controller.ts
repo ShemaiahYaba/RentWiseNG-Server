@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '@/lib/routeParams.js';
 import { conversationService } from './conversation.service.js';
 import { created, ok } from '@/lib/response.js';
-import { messageQuerySchema } from './conversation.schema.js';
+import type { MessageQueryInput } from './conversation.schema.js';
 
 export const conversationController = {
   async list(req: Request, _res: Response, next: NextFunction): Promise<void> {
@@ -16,14 +16,13 @@ export const conversationController = {
 
   async getMessages(req: Request, _res: Response, next: NextFunction): Promise<void> {
     try {
-      const query = messageQuerySchema.parse(req.query);
       const result = await conversationService.getMessages(
         req.user!.id,
         routeParam(req.params.id),
-        query,
+        req.query as unknown as MessageQueryInput,
       );
 
-      ok(_res, { result });
+      ok(_res, result);
     } catch (err) {
       next(err);
     }
