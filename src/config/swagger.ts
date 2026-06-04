@@ -1,5 +1,17 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { env } from './env.js';
+
+const configDir = path.dirname(fileURLToPath(import.meta.url));
+const isCompiled = /[/\\]dist[/\\]/.test(configDir);
+const modulesDir = path.resolve(configDir, '..', 'modules');
+/** swagger-jsdoc globs need forward slashes (e.g. on Windows). */
+const routeApiGlob = path.posix.join(
+  modulesDir.replace(/\\/g, '/'),
+  '**',
+  isCompiled ? '*.routes.js' : '*.routes.ts',
+);
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -56,11 +68,12 @@ const options: swaggerJsdoc.Options = {
       },
     },
   },
-  apis: ['./src/modules/**/*.routes.ts'],
+  apis: [routeApiGlob],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
 
+/** Enabled in dev; on Render/staging set NODE_ENV=production and keep docs via ENABLE_SWAGGER=true if needed. */
 export function isSwaggerEnabled(): boolean {
-  return env.NODE_ENV !== 'production';
+  return env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true';
 }
