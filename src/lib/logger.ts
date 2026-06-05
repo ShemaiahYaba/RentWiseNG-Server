@@ -1,18 +1,16 @@
 import pino from 'pino';
+import pinoPretty from 'pino-pretty';
 import { env } from '../config/env.js';
 import { getRequestId } from '../context/requestContext.js';
 
-const baseLogger = pino({
-  level: env.LOG_LEVEL,
-  ...(env.NODE_ENV === 'development'
-    ? {
-        transport: {
-          target: 'pino-pretty',
-          options: { colorize: true, translateTime: 'SYS:standard' },
-        },
-      }
-    : {}),
-});
+// Use pino-pretty as a sync stream in dev. The transport/worker path (thread-stream)
+// crashes on Windows when run under tsx watch.
+const baseLogger = pino(
+  { level: env.LOG_LEVEL },
+  env.NODE_ENV === 'development'
+    ? pinoPretty({ colorize: true, translateTime: 'SYS:standard' })
+    : undefined,
+);
 
 export const logger = new Proxy(baseLogger, {
   get(target, prop, receiver) {
