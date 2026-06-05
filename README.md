@@ -62,11 +62,12 @@ pnpm run build
 pnpm run lint
 ```
 
-## API
+## API documentation
 
+- **Technical guide (DTOs, use cases, patterns):** [docs/API-TECHNICAL-GUIDE.md](docs/API-TECHNICAL-GUIDE.md)
+- **Interactive (dev):** `GET /api/v1/docs` when `NODE_ENV=development`
 - Health: `GET /health`
 - API prefix: `/api/v1`
-- Swagger UI (non-production): `GET /api/v1/docs`
 
 ## Folder structure
 
