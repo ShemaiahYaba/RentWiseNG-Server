@@ -166,9 +166,9 @@ flowchart TB
 
 | Done | Task | Route |
 | --- | --- | --- |
-| [ ] | **reviews** — `POST /reviews` gated on completed payment | `POST /api/v1/reviews` |
-| [ ] | **reviews** — `GET /reviews/listing/:id` public list | `GET /api/v1/reviews/listing/:id` |
-| [ ] | README: gating rule documented | `reviews/README.md` |
+| [x] | **reviews** — `POST /reviews` gated on completed payment | `POST /api/v1/reviews` |
+| [x] | **reviews** — `GET /reviews/listing/:id` public list | `GET /api/v1/reviews/listing/:id` |
+| [x] | README: gating rule documented | `reviews/README.md` |
 
 ---
 
@@ -269,8 +269,8 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | POST | `/reviews` | S |
-| [ ] | GET | `/reviews/listing/:id` | S |
+| [x] | POST | `/reviews` | S |
+| [x] | GET | `/reviews/listing/:id` | S |
 
 ### Audit log (H)
 

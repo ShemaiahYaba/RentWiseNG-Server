@@ -1,16 +1,55 @@
 # Reviews module
 
-Owns post-rental reviews gated on completed payments.
+Owns post-rental reviews gated on released payments.
 
 ## Routes (`/api/v1/reviews`)
 
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |
-| POST | `/` | Bearer | Submit review (requires `payment_id` with released payment) |
-| GET | `/listing/:id` | No | Reviews for a listing |
+| POST | `/` | Bearer | Submit review (tenant who paid, one per payment) |
+| GET | `/listing/:id` | No | Public reviews for a listing |
 
-## Gating rule
+## Gating rules
 
-Reviews require a `payments` row in `released` status linked via `payment_id`.
+| Rule | Behavior |
+| --- | --- |
+| **Who can POST** | Authenticated user must be `payment.tenantId` |
+| **Payment gate** | `payment.status` must be `released` |
+| **Consistency** | `body.listingId` must equal `payment.listingId` |
+| **Dedupe** | One review per `paymentId` (active rows only) |
+| **Listing** | Listing must exist and not be soft-deleted |
 
-**Phase 2:** Enforce gate in service, dedupe one review per payment.
+## Request example
+
+```json
+POST /api/v1/reviews
+Authorization: Bearer <tenant-token>
+
+{
+  "listingId": "uuid",
+  "paymentId": "uuid",
+  "rating": 5,
+  "comment": "Great place, smooth move-in."
+}
+```
+
+## Response envelopes
+
+- `POST /` → `201` with `data.review`
+- `GET /listing/:id` → `200` with `data.reviews` (each includes `reviewer: { id, fullName }`)
+
+## Error codes
+
+| Code | When |
+| --- | --- |
+| **403** | Caller is not the tenant who made the payment |
+| **404** | Payment, listing not found, or listing soft-deleted |
+| **409** | Review already exists for this `paymentId` |
+| **422** | Payment not `released`, or `listingId` does not match payment |
+
+## Out of scope (this wave)
+
+- Admin review moderation
+- Soft-delete review API
+- Listing aggregate rating
+- Paystack / payment webhook changes

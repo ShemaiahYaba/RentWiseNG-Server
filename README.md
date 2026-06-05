@@ -100,7 +100,7 @@ Post-MVP polish and known deferrals: **[docs/OPEN-ISSUES.md](docs/OPEN-ISSUES.md
 | `inspections` | Booking & status | **Implemented** |
 | `payments` | Paystack, escrow, webhooks | **Implemented** |
 | `conversations` | REST history; WebSocket in Wave 5+ | **Implemented** (REST) |
-| `reviews` | Post-payment reviews | Phase 2 (Wave 4) |
+| `reviews` | Post-payment reviews | **Implemented** |
 | `reports` | User/listing reports | **Implemented** |
 | `auditLog` | Scoped audit trail | Phase 2 (Wave 5) |
 | `admin` | Queues, reports, config | **Implemented** (audit-logs Wave 5) |
