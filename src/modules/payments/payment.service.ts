@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { auditLogWrite } from '@/lib/auditLogWrite.js';
 import { AppError } from '@/lib/errors.js';
 import { initializeTransaction, verifyWebhookSignature } from '@/config/paystack.js';
 import { env } from '@/config/env.js';
@@ -126,6 +127,21 @@ export const paymentService = {
       throw new AppError('failed to load created payment', 500);
     }
 
+    await auditLogWrite({
+      actorId: tenantId,
+      actorRole: 'tenant',
+      action: 'payment.initiated',
+      entityType: 'payment',
+      entityId: payment.id,
+      beforeState: null,
+      afterState: {
+        id: payment.id,
+        status: payment.status,
+        inspectionId: payment.inspectionId,
+        amount: payment.amount,
+      },
+    });
+
     return { payment, authorizationUrl: paystack.authorizationUrl };
   },
 
@@ -158,6 +174,8 @@ export const paymentService = {
         return { received: true, paymentId: payment.id, status: payment.status };
       }
 
+      const initialStatus = payment.status;
+
       if (payment.status === 'initiated') {
         await transitionStatus(payment.id, 'initiated', 'processing', {
           triggerSource: 'webhook',
@@ -178,6 +196,17 @@ export const paymentService = {
       }
 
       const finalPayment = await paymentRepo.findById(payment.id);
+      if (finalPayment && finalPayment.status !== initialStatus) {
+        await auditLogWrite({
+          actorId: payment.tenantId,
+          actorRole: 'system',
+          action: 'payment.status_changed',
+          entityType: 'payment',
+          entityId: payment.id,
+          beforeState: { id: payment.id, status: initialStatus },
+          afterState: { id: payment.id, status: finalPayment.status, event },
+        });
+      }
       return { received: true, paymentId: payment.id, status: finalPayment?.status };
     }
 
@@ -185,9 +214,19 @@ export const paymentService = {
       if (payment.status === 'failed' || payment.status === 'released') {
         return { received: true, paymentId: payment.id, status: payment.status };
       }
+      const initialStatus = payment.status;
       await transitionStatus(payment.id, payment.status, 'failed', {
         triggerSource: 'webhook',
         note: event,
+      });
+      await auditLogWrite({
+        actorId: payment.tenantId,
+        actorRole: 'system',
+        action: 'payment.status_changed',
+        entityType: 'payment',
+        entityId: payment.id,
+        beforeState: { id: payment.id, status: initialStatus },
+        afterState: { id: payment.id, status: 'failed', event },
       });
       return { received: true, paymentId: payment.id, status: 'failed' };
     }
@@ -218,6 +257,16 @@ export const paymentService = {
     if (!updated) {
       throw new AppError('failed to load updated payment', 500);
     }
+
+    await auditLogWrite({
+      actorId: tenantId,
+      actorRole: 'tenant',
+      action: 'payment.released',
+      entityType: 'payment',
+      entityId: paymentId,
+      beforeState: { id: payment.id, status: 'held' },
+      afterState: { id: updated.id, status: updated.status },
+    });
 
     return { payment: updated };
   },

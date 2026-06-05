@@ -3,6 +3,7 @@ import { validate } from '../../lib/validate.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { adminController } from './admin.controller.js';
+import { auditLogQuerySchema } from '../auditLog/auditLog.schema.js';
 import {
   configUpdateSchema,
   kycDecisionSchema,
@@ -176,11 +177,41 @@ adminRouter.patch(
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: entityType
+ *         schema: { type: string }
+ *       - in: query
+ *         name: entityId
+ *         schema: { type: string, format: uuid }
+ *       - in: query
+ *         name: action
+ *         schema: { type: string }
+ *       - in: query
+ *         name: from
+ *         schema: { type: string, format: date-time }
+ *       - in: query
+ *         name: to
+ *         schema: { type: string, format: date-time }
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, minimum: 1, default: 1 }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Full audit log with pagination
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
-adminRouter.get('/audit-logs', adminController.listAuditLogs);
+adminRouter.get(
+  '/audit-logs',
+  validate(auditLogQuerySchema, 'query'),
+  adminController.listAuditLogs,
+);
 
 /**
  * @swagger

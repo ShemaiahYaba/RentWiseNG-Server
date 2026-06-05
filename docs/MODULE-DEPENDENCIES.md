@@ -178,14 +178,14 @@ flowchart TB
 
 | Done | Task | Owner |
 | --- | --- | --- |
-| [ ] | **auditLog** — `auditLogWrite()` helper | Shemaiah |
-| [ ] | **auditLog** — `GET /audit-logs` scoped by role | Shemaiah |
-| [ ] | **admin** — `GET /admin/audit-logs` unscoped | Shemaiah |
-| [ ] | Wire audit calls into listings, inspections, payments, kyc, admin | Shemaiah |
+| [x] | **auditLog** — `auditLogWrite()` helper | Shemaiah |
+| [x] | **auditLog** — `GET /audit-logs` scoped by role | Shemaiah |
+| [x] | **admin** — `GET /admin/audit-logs` unscoped | Shemaiah |
+| [x] | Wire audit calls into listings, inspections, payments, kyc, admin | Shemaiah |
 | [ ] | **conversations** — WebSocket real-time (if MVP needs it) | Shemaiah |
 | [ ] | Phone OTP — SMS provider (email already on Resend) | Shemaiah |
-| [ ] | `pnpm run build` clean (fix skeleton TS errors) | Shemaiah |
-| [ ] | E2E smoke: tenant path register → listing → inspect → pay → review | Both |
+| [x] | `pnpm run build` clean (fix skeleton TS errors) | Shemaiah |
+| [x] | E2E smoke: tenant path register → listing → inspect → pay → review | Both |
 
 ---
 
@@ -276,7 +276,7 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | GET | `/audit-logs` | H |
+| [x] | GET | `/audit-logs` | H |
 
 ### Admin (H)
 
@@ -288,7 +288,7 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 | [x] | PATCH | `/admin/verification-queue/kyc/:id` | H |
 | [x] | GET | `/admin/reports` | H |
 | [x] | PATCH | `/admin/reports/:id/status` | H |
-| [ ] | GET | `/admin/audit-logs` | H |
+| [x] | GET | `/admin/audit-logs` | H |
 | [x] | GET | `/admin/config` | H |
 | [x] | PATCH | `/admin/config/:key` | H |
 

@@ -1,7 +1,12 @@
-import { notImplemented } from '../../lib/notImplemented.js';
+import { auditLogRepo } from './auditLog.repo.js';
+import type { AuditLogQuery } from './auditLog.types.js';
 
 export const auditLogService = {
-  async list(_userId: string, _role: string, _query: unknown) {
-    notImplemented('auditLog.list');
+  async list(userId: string, role: string, query: AuditLogQuery) {
+    return auditLogRepo.listScoped(userId, role, query);
+  },
+
+  async listAll(query: AuditLogQuery) {
+    return auditLogRepo.listAll(query);
   },
 };

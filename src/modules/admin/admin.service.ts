@@ -1,7 +1,9 @@
+import { auditLogWrite } from '@/lib/auditLogWrite.js';
 import { AppError } from '@/lib/errors.js';
-import { notImplemented } from '@/lib/notImplemented.js';
 import { kycRepo } from '@/modules/kyc/kyc.repo.js';
 import { listingRepo } from '@/modules/listings/listing.repo.js';
+import { auditLogService } from '@/modules/auditLog/auditLog.service.js';
+import type { AuditLogQuery } from '@/modules/auditLog/auditLog.types.js';
 import { adminRepo } from './admin.repo.js';
 import type {
   ConfigUpdateInput,
@@ -45,6 +47,22 @@ export const adminService = {
     }
 
     const detail = await listingRepo.findById(listingId);
+    await auditLogWrite({
+      actorId: adminId,
+      actorRole: 'admin',
+      action: 'listing.verification_changed',
+      entityType: 'listing',
+      entityId: listingId,
+      beforeState: {
+        id: listing.id,
+        verificationStatus: listing.verificationStatus,
+      },
+      afterState: {
+        id: listingId,
+        verificationStatus: input.status,
+        note: input.note ?? null,
+      },
+    });
     return { listing: detail };
   },
 
@@ -74,6 +92,24 @@ export const adminService = {
     if (!submissionResult) {
       throw new AppError('KYC submission not found', 404);
     }
+
+    await auditLogWrite({
+      actorId: adminId,
+      actorRole: 'admin',
+      action: 'kyc.decision',
+      entityType: 'kyc',
+      entityId: kycId,
+      beforeState: {
+        id: submission.id,
+        status: submission.status,
+        userId: submission.userId,
+      },
+      afterState: {
+        id: kycId,
+        status: input.status,
+        rejectionReason: input.rejectionReason ?? null,
+      },
+    });
 
     return { submission: submissionResult };
   },
@@ -107,11 +143,28 @@ export const adminService = {
       throw new AppError('report not found', 404);
     }
 
+    await auditLogWrite({
+      actorId: adminId,
+      actorRole: 'admin',
+      action: 'report.status_changed',
+      entityType: 'report',
+      entityId: reportId,
+      beforeState: {
+        id: report.id,
+        status: report.status,
+      },
+      afterState: {
+        id: reportId,
+        status: input.status,
+        note: input.note ?? null,
+      },
+    });
+
     return { report: updated };
   },
 
-  async listAuditLogs(_query: unknown) {
-    notImplemented('admin.listAuditLogs');
+  async listAuditLogs(query: AuditLogQuery) {
+    return auditLogService.listAll(query);
   },
 
   async listConfig() {
@@ -129,6 +182,22 @@ export const adminService = {
     if (!entry) {
       throw new AppError('config key not found', 404);
     }
+
+    await auditLogWrite({
+      actorId: adminId,
+      actorRole: 'admin',
+      action: 'config.updated',
+      entityType: 'config',
+      entityId: existing.id,
+      beforeState: {
+        key: existing.key,
+        value: existing.value,
+      },
+      afterState: {
+        key: entry.key,
+        value: entry.value,
+      },
+    });
 
     return { config: entry };
   },

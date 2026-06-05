@@ -1,3 +1,4 @@
+import { auditLogWrite } from '@/lib/auditLogWrite.js';
 import { AppError } from '@/lib/errors.js';
 import { getConfigBool, getConfigNumber } from '@/lib/systemConfig.js';
 import { kycRepo } from '@/modules/kyc/kyc.repo.js';
@@ -70,10 +71,25 @@ export const listingService = {
       photoUrls: data.photoUrls,
     });
 
+    await auditLogWrite({
+      actorId: userId,
+      actorRole: role,
+      action: 'listing.created',
+      entityType: 'listing',
+      entityId: listing.id,
+      beforeState: null,
+      afterState: {
+        id: listing.id,
+        verificationStatus: listing.verificationStatus,
+        availabilityStatus: listing.availabilityStatus,
+        title: listing.title,
+      },
+    });
+
     return { listing };
   },
 
-  async update(userId: string, id: string, data: UpdateListingInput) {
+  async update(userId: string, role: string, id: string, data: UpdateListingInput) {
     if (data.photoUrls) {
       const maxPhotos = await getConfigNumber('max_listing_photos');
       if (data.photoUrls.length > maxPhotos) {
@@ -88,18 +104,66 @@ export const listingService = {
       throw new AppError('apartment type not found', 404);
     }
 
+    const before = await listingRepo.findById(id);
+    if (!before || before.ownerId !== userId) {
+      throw new AppError('listing not found', 404);
+    }
+
     const listing = await listingRepo.update(id, userId, data);
     if (!listing) {
       throw new AppError('listing not found', 404);
     }
 
+    await auditLogWrite({
+      actorId: userId,
+      actorRole: role,
+      action: 'listing.updated',
+      entityType: 'listing',
+      entityId: id,
+      beforeState: {
+        id: before.id,
+        title: before.title,
+        verificationStatus: before.verificationStatus,
+        availabilityStatus: before.availabilityStatus,
+      },
+      afterState: {
+        id: listing.id,
+        title: listing.title,
+        verificationStatus: listing.verificationStatus,
+        availabilityStatus: listing.availabilityStatus,
+      },
+    });
+
     return { listing };
   },
 
-  async remove(userId: string, id: string) {
+  async remove(userId: string, role: string, id: string) {
+    const before = await listingRepo.findById(id);
+    if (!before || before.ownerId !== userId) {
+      throw new AppError('listing not found', 404);
+    }
+
     const deleted = await listingRepo.softDelete(id, userId);
     if (!deleted) {
       throw new AppError('listing not found', 404);
     }
+
+    await auditLogWrite({
+      actorId: userId,
+      actorRole: role,
+      action: 'listing.deleted',
+      entityType: 'listing',
+      entityId: id,
+      beforeState: {
+        id: before.id,
+        title: before.title,
+        verificationStatus: before.verificationStatus,
+        availabilityStatus: before.availabilityStatus,
+      },
+      afterState: {
+        id,
+        deleted: true,
+      },
+    });
   },
 };

@@ -40,6 +40,7 @@ export const listingController = {
     try {
       const result = await listingService.update(
         req.user!.id,
+        req.user!.role,
         routeParam(req.params.id),
         req.body,
       );
@@ -51,7 +52,7 @@ export const listingController = {
 
   async remove(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await listingService.remove(req.user!.id, routeParam(req.params.id));
+      await listingService.remove(req.user!.id, req.user!.role, routeParam(req.params.id));
       res.status(204).send();
     } catch (err) {
       next(err);

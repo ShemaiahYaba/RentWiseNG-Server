@@ -1,3 +1,4 @@
+import { auditLogWrite } from '@/lib/auditLogWrite.js';
 import { AppError } from '@/lib/errors.js';
 import { kycRepo } from './kyc.repo.js';
 import type { SubmitKycInput } from './kyc.schema.js';
@@ -8,7 +9,7 @@ function sanitizeSubmission(submission: Awaited<ReturnType<typeof kycRepo.create
 }
 
 export const kycService = {
-  async submit(userId: string, data: SubmitKycInput) {
+  async submit(userId: string, role: string, data: SubmitKycInput) {
     const existing = await kycRepo.findByUserId(userId);
     let fromStatus = 'none';
     if (existing) {
@@ -28,6 +29,21 @@ export const kycService = {
       toStatus: 'pending',
       changedBy: userId,
     });
+
+    await auditLogWrite({
+      actorId: userId,
+      actorRole: role,
+      action: 'kyc.submitted',
+      entityType: 'kyc',
+      entityId: submission.id,
+      beforeState: fromStatus === 'none' ? null : { status: fromStatus },
+      afterState: {
+        id: submission.id,
+        status: submission.status,
+        documentType: submission.documentType,
+      },
+    });
+
     return sanitizeSubmission(submission);
   },
 

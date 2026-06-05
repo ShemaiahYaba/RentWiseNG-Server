@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '@/lib/routeParams.js';
 import { ok } from '@/lib/response.js';
+import type { AuditLogQuery } from '@/modules/auditLog/auditLog.types.js';
 import { adminService } from './admin.service.js';
 
 export const adminController = {
@@ -70,9 +71,10 @@ export const adminController = {
     }
   },
 
-  async listAuditLogs(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async listAuditLogs(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.listAuditLogs(req.query);
+      const result = await adminService.listAuditLogs(req.query as unknown as AuditLogQuery);
+      ok(res, result);
     } catch (err) {
       next(err);
     }

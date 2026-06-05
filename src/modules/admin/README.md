@@ -14,6 +14,12 @@ Owns verification queues, report moderation, full audit log, and system config. 
 | PATCH | `/reports/:id/status` | Moderate report (`under_review` \| `resolved` \| `dismissed`) |
 | GET | `/config` | List `system_config` |
 | PATCH | `/config/:key` | Update config value |
-| GET | `/audit-logs` | Full audit log (Wave 5 — not implemented) |
+| GET | `/audit-logs` | Full unscoped audit log with pagination |
 
-Report status transitions: `open → under_review → resolved | dismissed`. Each change logs to `report_status_logs`.
+### Audit log query params
+
+`entityType`, `entityId`, `action`, `from`, `to`, `page` (default 1), `limit` (default 20, max 100).
+
+Response: `{ auditLogs, pagination: { page, limit, total } }`.
+
+Report status transitions: `open → under_review → resolved | dismissed`. Each change logs to `report_status_logs` and `audit_logs` (`report.status_changed`).

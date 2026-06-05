@@ -5,7 +5,7 @@ import { ok, created } from '@/lib/response.js';
 export const kycController = {
   async submit(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const submission = await kycService.submit(req.user!.id, req.body);
+      const submission = await kycService.submit(req.user!.id, req.user!.role, req.body);
       created(res, { submission });
     } catch (err) {
       next(err);

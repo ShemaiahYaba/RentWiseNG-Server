@@ -1,3 +1,4 @@
+import { auditLogWrite } from '@/lib/auditLogWrite.js';
 import { AppError } from '@/lib/errors.js';
 import { getConfigNumber } from '@/lib/systemConfig.js';
 import { listingRepo } from '@/modules/listings/listing.repo.js';
@@ -70,6 +71,21 @@ export const inspectionService = {
       throw new AppError('failed to load created inspection', 500);
     }
 
+    await auditLogWrite({
+      actorId: tenantId,
+      actorRole: 'tenant',
+      action: 'inspection.booked',
+      entityType: 'inspection',
+      entityId: inspection.id,
+      beforeState: null,
+      afterState: {
+        id: inspection.id,
+        listingId: inspection.listingId,
+        status: inspection.status,
+        scheduledDate: inspection.scheduledDate,
+      },
+    });
+
     return { inspection };
   },
 
@@ -83,7 +99,7 @@ export const inspectionService = {
     return { inspection };
   },
 
-  async updateStatus(userId: string, id: string, status: string) {
+  async updateStatus(userId: string, role: string, id: string, status: string) {
     const inspection = await inspectionRepo.findById(id);
     if (!inspection) {
       throw new AppError('inspection not found', 404);
@@ -110,6 +126,22 @@ export const inspectionService = {
     if (!updated) {
       throw new AppError('failed to load updated inspection', 500);
     }
+
+    await auditLogWrite({
+      actorId: userId,
+      actorRole: role,
+      action: 'inspection.status_changed',
+      entityType: 'inspection',
+      entityId: id,
+      beforeState: {
+        id: inspection.id,
+        status: inspection.status,
+      },
+      afterState: {
+        id: updated.id,
+        status: updated.status,
+      },
+    });
 
     return { inspection: updated };
   },

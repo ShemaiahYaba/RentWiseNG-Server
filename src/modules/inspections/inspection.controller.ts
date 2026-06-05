@@ -31,6 +31,7 @@ export const inspectionController = {
     try {
       const result = await inspectionService.updateStatus(
         req.user!.id,
+        req.user!.role,
         routeParam(req.params.id),
         req.body.status,
       );
