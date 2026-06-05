@@ -121,11 +121,11 @@ flowchart TB
 
 | Done | Task | Route |
 | --- | --- | --- |
-| [ ] | **inspections** — `POST /inspections` tenant books (listing exists, date rules) | `POST /api/v1/inspections` |
-| [ ] | **inspections** — `GET /inspections/:id` | `GET /api/v1/inspections/:id` |
-| [ ] | **inspections** — `GET /inspections/me` tenant + owner views | `GET /api/v1/inspections/me` |
-| [ ] | **inspections** — `PATCH /inspections/:id/status` confirm \| cancel | `PATCH /api/v1/inspections/:id/status` |
-| [ ] | **inspections** — `inspection_status_logs` on each transition | DB writes |
+| [x] | **inspections** — `POST /inspections` tenant books (listing exists, date rules) | `POST /api/v1/inspections` |
+| [x] | **inspections** — `GET /inspections/:id` | `GET /api/v1/inspections/:id` |
+| [x] | **inspections** — `GET /inspections/me` tenant + owner views | `GET /api/v1/inspections/me` |
+| [x] | **inspections** — `PATCH /inspections/:id/status` confirm \| cancel | `PATCH /api/v1/inspections/:id/status` |
+| [x] | **inspections** — `inspection_status_logs` on each transition | DB writes |
 | [x] | **admin** — `GET /admin/verification-queue/listings` | admin route |
 | [x] | **admin** — `PATCH /admin/verification-queue/listings/:id` verified \| limited \| rejected | admin route |
 | [x] | **admin** — `GET /admin/verification-queue/kyc` | admin route |
@@ -233,10 +233,10 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | POST | `/inspections` | H |
-| [ ] | GET | `/inspections/:id` | H |
-| [ ] | GET | `/inspections/me` | H |
-| [ ] | PATCH | `/inspections/:id/status` | H |
+| [x] | POST | `/inspections` | H |
+| [x] | GET | `/inspections/:id` | H |
+| [x] | GET | `/inspections/me` | H |
+| [x] | PATCH | `/inspections/:id/status` | H |
 
 ### Payments (H)
 

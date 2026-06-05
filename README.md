@@ -97,7 +97,7 @@ Post-MVP polish and known deferrals: **[docs/OPEN-ISSUES.md](docs/OPEN-ISSUES.md
 | `user` | Profile (`/users/me`) | Phase 2 |
 | `kyc` | Document submission & status | Phase 2 |
 | `listings` | CRUD, search, verification | Phase 2 |
-| `inspections` | Booking & status | Phase 2 |
+| `inspections` | Booking & status | **Implemented** |
 | `payments` | Paystack, escrow, webhooks | Phase 2 |
 | `conversations` | REST history; WebSocket in Phase 2+ | Phase 2 |
 | `reviews` | Post-payment reviews | Phase 2 |

@@ -3,7 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 import { getAllowedOrigins } from './config/env.js';
-import { initSentry, Sentry } from './config/sentry.js';
+import { Sentry } from './config/sentry.js';
 import { isSwaggerEnabled, swaggerSpec } from './config/swagger.js';
 import { requestContextMiddleware } from './context/requestContext.js';
 import type { Express } from 'express';
@@ -24,8 +24,6 @@ import { paymentRouter } from './modules/payments/payment.routes.js';
 import { reportRouter } from './modules/reports/report.routes.js';
 import { reviewRouter } from './modules/reviews/review.routes.js';
 import { userRouter } from './modules/user/user.routes.js';
-
-initSentry();
 
 export const app: Express = express();
 

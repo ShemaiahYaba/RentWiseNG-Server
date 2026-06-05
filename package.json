@@ -5,9 +5,9 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch --import ./src/instrument.ts src/server.ts",
     "build": "tsc && tsc-alias -p tsconfig.json",
-    "start": "node dist/server.js",
+    "start": "node --import ./dist/instrument.js dist/server.js",
     "migrate": "tsx node_modules/drizzle-kit/bin.cjs migrate",
     "generate": "tsx node_modules/drizzle-kit/bin.cjs generate",
     "lint": "eslint src",

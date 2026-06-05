@@ -1,3 +1,4 @@
+import './instrument.js';
 import 'dotenv/config';
 import { app } from './app.js';
 import { testDatabaseConnection } from './config/db.js';

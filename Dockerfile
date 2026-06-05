@@ -26,4 +26,4 @@ RUN pnpm install --frozen-lockfile --prod \
   && pnpm add drizzle-kit@0.30.6 tsx@4.22.3
 
 EXPOSE 3000
-CMD ["node", "dist/server.js"]
+CMD ["node", "--import", "./dist/instrument.js", "dist/server.js"]
