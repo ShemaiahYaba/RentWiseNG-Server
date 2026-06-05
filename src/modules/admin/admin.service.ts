@@ -3,7 +3,17 @@ import { notImplemented } from '@/lib/notImplemented.js';
 import { kycRepo } from '@/modules/kyc/kyc.repo.js';
 import { listingRepo } from '@/modules/listings/listing.repo.js';
 import { adminRepo } from './admin.repo.js';
-import type { KycDecisionInput, VerificationStatusInput } from './admin.schema.js';
+import type {
+  ConfigUpdateInput,
+  KycDecisionInput,
+  ReportStatusInput,
+  VerificationStatusInput,
+} from './admin.schema.js';
+
+const REPORT_TRANSITIONS: Record<string, string[]> = {
+  open: ['under_review'],
+  under_review: ['resolved', 'dismissed'],
+};
 
 export const adminService = {
   async listingQueue() {
@@ -69,18 +79,57 @@ export const adminService = {
   },
 
   async listReports() {
-    notImplemented('admin.listReports');
+    const queue = await adminRepo.listModerationQueue();
+    return { queue };
   },
-  async updateReportStatus(_adminId: string, _id: string, _status: string) {
-    notImplemented('admin.updateReportStatus');
+
+  async updateReportStatus(adminId: string, reportId: string, input: ReportStatusInput) {
+    const report = await adminRepo.findReportById(reportId);
+    if (!report) {
+      throw new AppError('report not found', 404);
+    }
+
+    const allowed = REPORT_TRANSITIONS[report.status];
+    if (!allowed?.includes(input.status)) {
+      throw new AppError(
+        `invalid status transition from ${report.status} to ${input.status}`,
+        409,
+      );
+    }
+
+    const updated = await adminRepo.updateReportStatus(
+      adminId,
+      reportId,
+      input.status,
+      input.note,
+    );
+    if (!updated) {
+      throw new AppError('report not found', 404);
+    }
+
+    return { report: updated };
   },
+
   async listAuditLogs(_query: unknown) {
     notImplemented('admin.listAuditLogs');
   },
+
   async listConfig() {
-    notImplemented('admin.listConfig');
+    const config = await adminRepo.listSystemConfig();
+    return { config };
   },
-  async updateConfig(_adminId: string, _key: string, _value: string) {
-    notImplemented('admin.updateConfig');
+
+  async updateConfig(adminId: string, key: string, input: ConfigUpdateInput) {
+    const existing = await adminRepo.findConfigByKey(key);
+    if (!existing) {
+      throw new AppError('config key not found', 404);
+    }
+
+    const entry = await adminRepo.updateSystemConfig(adminId, key, input.value);
+    if (!entry) {
+      throw new AppError('config key not found', 404);
+    }
+
+    return { config: entry };
   },
 };

@@ -9,6 +9,7 @@ Items here are **not blockers** for the current MVP ship. Fix when convenient; t
 | OI-006 | kyc            | `document_number` stored as plain text                                                   | Medium (pre-prod) | Encryption helper before production                                                          | Shemaiah |
 | OI-007 | deps           | Neon client pinned at `@neondatabase/serverless@0.10.2`                                  | Low               | Re-evaluate upgrade to 1.x after MVP stable                                                    | Shemaiah |
 | OI-010 | conversations  | Conversation list sorted by thread `createdAt`, not last message activity                | Low UX            | Join latest message timestamp or defer until WebSocket port                                    | Samuel   |
+| OI-016 | payments       | `POST /payments/:id/release` updates DB only; no Paystack Transfer/payout to landlord    | Medium (pre-prod) | Integrate Paystack Transfer API or document manual payout; `payment_release_window_hours` config exists for future cron | Shemaiah |
 
 ## Render / deploy notes
 

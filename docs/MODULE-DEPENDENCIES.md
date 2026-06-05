@@ -143,20 +143,20 @@ flowchart TB
 
 | Done | Task | Route |
 | --- | --- | --- |
-| [ ] | **payments** — `POST /payments/initiate` Paystack + `held` status | `POST /api/v1/payments/initiate` |
-| [ ] | **payments** — `POST /payments/webhook` HMAC verify | `POST /api/v1/payments/webhook` |
-| [ ] | **payments** — `POST /payments/:id/release` tenant release | `POST /api/v1/payments/:id/release` |
-| [ ] | **payments** — `GET /payments/:id`, `GET /payments/me` | GET routes |
-| [ ] | **payments** — `payment_status_logs` on transitions | DB writes |
-| [ ] | **admin** — `GET /admin/reports`, `PATCH /admin/reports/:id/status` | admin routes |
-| [ ] | **admin** — `GET /admin/config`, `PATCH /admin/config/:key` | admin routes |
+| [x] | **payments** — `POST /payments/initiate` Paystack + `held` status | `POST /api/v1/payments/initiate` |
+| [x] | **payments** — `POST /payments/webhook` HMAC verify | `POST /api/v1/payments/webhook` |
+| [x] | **payments** — `POST /payments/:id/release` tenant release | `POST /api/v1/payments/:id/release` |
+| [x] | **payments** — `GET /payments/:id`, `GET /payments/me` | GET routes |
+| [x] | **payments** — `payment_status_logs` on transitions | DB writes |
+| [x] | **admin** — `GET /admin/reports`, `PATCH /admin/reports/:id/status` | admin routes |
+| [x] | **admin** — `GET /admin/config`, `PATCH /admin/config/:key` | admin routes |
 
 ### Samuel — optional hardening (parallel)
 
 | Done | Task |
 | --- | --- |
-| [ ] | Harden **user** / **kyc** / **reports** from Wave 1 QA |
-| [ ] | Extra validation edge cases + Swagger accuracy on your routes |
+| [x] | Harden **user** / **kyc** / **reports** from Wave 1 QA |
+| [x] | Extra validation edge cases + Swagger accuracy on your routes |
 
 ---
 
@@ -242,11 +242,11 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 
 | Done | Method | Path | Owner |
 | --- | --- | --- | --- |
-| [ ] | POST | `/payments/initiate` | H |
-| [ ] | POST | `/payments/webhook` | H |
-| [ ] | POST | `/payments/:id/release` | H |
-| [ ] | GET | `/payments/:id` | H |
-| [ ] | GET | `/payments/me` | H |
+| [x] | POST | `/payments/initiate` | H |
+| [x] | POST | `/payments/webhook` | H |
+| [x] | POST | `/payments/:id/release` | H |
+| [x] | GET | `/payments/:id` | H |
+| [x] | GET | `/payments/me` | H |
 
 ### Conversations (S — REST; H — WebSocket)
 
@@ -286,11 +286,11 @@ Use this as the single “everything we owe” list. Owner column: **S** = Samue
 | [x] | PATCH | `/admin/verification-queue/listings/:id` | H |
 | [x] | GET | `/admin/verification-queue/kyc` | H |
 | [x] | PATCH | `/admin/verification-queue/kyc/:id` | H |
-| [ ] | GET | `/admin/reports` | H |
-| [ ] | PATCH | `/admin/reports/:id/status` | H |
+| [x] | GET | `/admin/reports` | H |
+| [x] | PATCH | `/admin/reports/:id/status` | H |
 | [ ] | GET | `/admin/audit-logs` | H |
-| [ ] | GET | `/admin/config` | H |
-| [ ] | PATCH | `/admin/config/:key` | H |
+| [x] | GET | `/admin/config` | H |
+| [x] | PATCH | `/admin/config/:key` | H |
 
 ---
 

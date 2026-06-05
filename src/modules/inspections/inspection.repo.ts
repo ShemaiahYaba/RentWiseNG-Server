@@ -23,6 +23,7 @@ export type InspectionDetail = {
     id: string;
     title: string;
     ownerId: string;
+    rentAmount: string;
   };
 };
 
@@ -38,7 +39,7 @@ const ACTIVE_STATUSES = ['pending', 'confirmed'] as const;
 function mapInspectionRow(row: {
   inspection: typeof inspections.$inferSelect;
   tenant: { id: string; fullName: string };
-  listing: { id: string; title: string; ownerId: string };
+  listing: { id: string; title: string; ownerId: string; rentAmount: string };
 }): InspectionDetail {
   return {
     id: row.inspection.id,
@@ -68,6 +69,7 @@ async function loadInspectionDetail(
         id: listings.id,
         title: listings.title,
         ownerId: listings.ownerId,
+        rentAmount: listings.rentAmount,
       },
     })
     .from(inspections)
@@ -114,6 +116,7 @@ export const inspectionRepo = {
           id: listings.id,
           title: listings.title,
           ownerId: listings.ownerId,
+          rentAmount: listings.rentAmount,
         },
       })
       .from(inspections)

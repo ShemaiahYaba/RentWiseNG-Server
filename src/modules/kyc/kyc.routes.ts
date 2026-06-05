@@ -42,7 +42,7 @@ export const kycRouter: Router = Router();
  *                 format: uri
  *     responses:
  *       201:
- *         description: KYC submission created successfully
+ *         description: Created; data.submission (documentNumber omitted)
  *       401:
  *         description: Missing or invalid bearer token
  *       403:
@@ -70,7 +70,7 @@ kycRouter.post(
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: KYC submission returned successfully
+ *         description: Success; data.submission (documentNumber omitted)
  *       401:
  *         description: Missing or invalid bearer token
  *       404:

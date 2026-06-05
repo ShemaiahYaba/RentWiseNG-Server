@@ -10,10 +10,10 @@ Owns verification queues, report moderation, full audit log, and system config. 
 | PATCH | `/verification-queue/listings/:id` | Set verified \| limited \| rejected |
 | GET | `/verification-queue/kyc` | Pending KYC |
 | PATCH | `/verification-queue/kyc/:id` | Approve \| reject |
-| GET | `/reports` | Open / under_review reports |
-| PATCH | `/reports/:id/status` | Moderate report |
-| GET | `/audit-logs` | Full audit log |
+| GET | `/reports` | Open + under_review reports with reporter/target context |
+| PATCH | `/reports/:id/status` | Moderate report (`under_review` \| `resolved` \| `dismissed`) |
 | GET | `/config` | List `system_config` |
 | PATCH | `/config/:key` | Update config value |
+| GET | `/audit-logs` | Full audit log (Wave 5 — not implemented) |
 
-**Phase 2:** Implement all handlers, state log writes, and seed `system_config` defaults from pitch doc.
+Report status transitions: `open → under_review → resolved | dismissed`. Each change logs to `report_status_logs`.

@@ -48,21 +48,23 @@ export const adminController = {
     }
   },
 
-  async listReports(_req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async listReports(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.listReports();
+      const result = await adminService.listReports();
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
 
-  async updateReport(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async updateReport(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.updateReportStatus(
+      const result = await adminService.updateReportStatus(
         req.user!.id,
         routeParam(req.params.id),
-        req.body.status,
+        req.body,
       );
+      ok(res, result);
     } catch (err) {
       next(err);
     }
@@ -76,21 +78,23 @@ export const adminController = {
     }
   },
 
-  async listConfig(_req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async listConfig(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.listConfig();
+      const result = await adminService.listConfig();
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
 
-  async updateConfig(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async updateConfig(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await adminService.updateConfig(
+      const result = await adminService.updateConfig(
         req.user!.id,
         routeParam(req.params.key),
-        req.body.value,
+        req.body,
       );
+      ok(res, result);
     } catch (err) {
       next(err);
     }

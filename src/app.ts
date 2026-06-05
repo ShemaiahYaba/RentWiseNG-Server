@@ -21,6 +21,7 @@ import { locationsRouter } from './modules/locations/locations.routes.js';
 import { apartmentTypesRouter } from './modules/apartmentTypes/apartmentTypes.routes.js';
 import { mediaRouter } from './modules/media/media.routes.js';
 import { paymentRouter } from './modules/payments/payment.routes.js';
+import { paymentWebhookRouter } from './modules/payments/payment.webhook.routes.js';
 import { reportRouter } from './modules/reports/report.routes.js';
 import { reviewRouter } from './modules/reviews/review.routes.js';
 import { userRouter } from './modules/user/user.routes.js';
@@ -37,6 +38,14 @@ app.use(
     credentials: true,
   }),
 );
+
+// Paystack webhook requires raw body for HMAC verification (before express.json()).
+app.use(
+  '/api/v1/payments/webhook',
+  express.raw({ type: 'application/json' }),
+  paymentWebhookRouter,
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestContextMiddleware);

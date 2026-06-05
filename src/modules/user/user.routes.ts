@@ -16,7 +16,7 @@ export const userRouter: Router = Router();
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Current user profile returned successfully
+ *         description: Success; data.user (passwordHash omitted)
  *       401:
  *         description: Missing or invalid bearer token
  *       404:
@@ -42,7 +42,7 @@ userRouter.get('/me', authenticate, userController.getMe);
  *               phone: { type: string }
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: Success; data.user (passwordHash omitted)
  *       401:
  *         description: Missing or invalid bearer token
  *       404:

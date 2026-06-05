@@ -117,8 +117,12 @@ adminRouter.patch(
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Moderation queue with reporter and target context
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 adminRouter.get('/reports', adminController.listReports);
 
@@ -130,9 +134,33 @@ adminRouter.get('/reports', adminController.listReports);
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [status]
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [under_review, resolved, dismissed]
+ *               note:
+ *                 type: string
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Report status updated
+ *       404:
+ *         description: Report not found
+ *       409:
+ *         description: Invalid status transition
+ *       422:
+ *         description: Validation error
  */
 adminRouter.patch(
   '/reports/:id/status',
@@ -163,8 +191,12 @@ adminRouter.get('/audit-logs', adminController.listAuditLogs);
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: All system_config rows (key, value, description, updatedAt)
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 adminRouter.get('/config', adminController.listConfig);
 
@@ -176,8 +208,28 @@ adminRouter.get('/config', adminController.listConfig);
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: key
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [value]
+ *             properties:
+ *               value:
+ *                 type: string
+ *                 minLength: 1
  *     responses:
- *       501:
- *         description: Phase 2
+ *       200:
+ *         description: Config entry updated
+ *       404:
+ *         description: Config key not found
+ *       422:
+ *         description: Validation error
  */
 adminRouter.patch('/config/:key', validate(configUpdateSchema), adminController.updateConfig);

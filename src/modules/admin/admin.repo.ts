@@ -1,5 +1,6 @@
-import { and, asc, desc, eq, isNull } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { db } from '@/config/db.js';
+import { systemConfig } from '@/db/schema/auditLogs.js';
 import { kycStatusLogs, kycSubmissions } from '@/db/schema/kyc.js';
 import {
   apartmentTypes,
@@ -8,6 +9,7 @@ import {
   listings,
   locations,
 } from '@/db/schema/listings.js';
+import { reportStatusLogs, reports } from '@/db/schema/reports.js';
 import { users } from '@/db/schema/users.js';
 
 export const adminRepo = {
@@ -166,5 +168,134 @@ export const adminRepo = {
 
     const { documentNumber: _, ...safe } = updated;
     return safe;
+  },
+
+  async listModerationQueue() {
+    const rows = await db
+      .select({
+        report: reports,
+        reporter: {
+          id: users.id,
+          fullName: users.fullName,
+          email: users.email,
+          role: users.role,
+        },
+      })
+      .from(reports)
+      .innerJoin(users, eq(reports.reporterId, users.id))
+      .where(
+        and(
+          inArray(reports.status, ['open', 'under_review']),
+          isNull(reports.deletedAt),
+        ),
+      )
+      .orderBy(desc(reports.createdAt));
+
+    const queue = [];
+    for (const { report, reporter } of rows) {
+      let target: { type: string; id: string; label: string } | null = null;
+
+      if (report.targetType === 'listing') {
+        const [listing] = await db
+          .select({ id: listings.id, title: listings.title })
+          .from(listings)
+          .where(and(eq(listings.id, report.targetId), isNull(listings.deletedAt)))
+          .limit(1);
+        if (listing) {
+          target = { type: 'listing', id: listing.id, label: listing.title };
+        }
+      } else if (report.targetType === 'user') {
+        const [user] = await db
+          .select({ id: users.id, fullName: users.fullName })
+          .from(users)
+          .where(and(eq(users.id, report.targetId), isNull(users.deletedAt)))
+          .limit(1);
+        if (user) {
+          target = { type: 'user', id: user.id, label: user.fullName };
+        }
+      }
+
+      queue.push({ ...report, reporter, target });
+    }
+
+    return queue;
+  },
+
+  async findReportById(reportId: string) {
+    const [row] = await db
+      .select()
+      .from(reports)
+      .where(and(eq(reports.id, reportId), isNull(reports.deletedAt)))
+      .limit(1);
+    return row;
+  },
+
+  async updateReportStatus(
+    adminId: string,
+    reportId: string,
+    toStatus: 'under_review' | 'resolved' | 'dismissed',
+    note?: string,
+  ) {
+    const report = await this.findReportById(reportId);
+    if (!report) {
+      return undefined;
+    }
+
+    const fromStatus = report.status;
+
+    const [updated] = await db
+      .update(reports)
+      .set({ status: toStatus })
+      .where(eq(reports.id, reportId))
+      .returning();
+
+    await db.insert(reportStatusLogs).values({
+      reportId,
+      fromStatus,
+      toStatus,
+      actionedBy: adminId,
+      note,
+    });
+
+    return updated;
+  },
+
+  async listSystemConfig() {
+    return db
+      .select({
+        key: systemConfig.key,
+        value: systemConfig.value,
+        description: systemConfig.description,
+        updatedAt: systemConfig.updatedAt,
+      })
+      .from(systemConfig)
+      .orderBy(asc(systemConfig.key));
+  },
+
+  async findConfigByKey(key: string) {
+    const [row] = await db
+      .select()
+      .from(systemConfig)
+      .where(eq(systemConfig.key, key))
+      .limit(1);
+    return row;
+  },
+
+  async updateSystemConfig(adminId: string, key: string, value: string) {
+    const [updated] = await db
+      .update(systemConfig)
+      .set({
+        value,
+        updatedBy: adminId,
+        updatedAt: new Date(),
+      })
+      .where(eq(systemConfig.key, key))
+      .returning({
+        key: systemConfig.key,
+        value: systemConfig.value,
+        description: systemConfig.description,
+        updatedAt: systemConfig.updatedAt,
+      });
+    return updated;
   },
 };

@@ -13,8 +13,8 @@ export const kycController = {
   },
   async getMe(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const status = await kycService.getMyStatus(req.user!.id);
-      ok(res, { status });
+      const submission = await kycService.getMyStatus(req.user!.id);
+      ok(res, { submission });
     } catch (err) {
       next(err);
     }

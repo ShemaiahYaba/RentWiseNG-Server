@@ -1,40 +1,68 @@
 import type { NextFunction, Request, Response } from 'express';
+import { isPaystackConfigured } from '@/config/paystack.js';
 import { routeParam } from '@/lib/routeParams.js';
+import { created, fail, ok } from '@/lib/response.js';
+import type { InitiatePaymentInput } from './payment.schema.js';
 import { paymentService } from './payment.service.js';
 
 export const paymentController = {
-  async initiate(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  async initiate(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await paymentService.initiate(req.user!.id, req.body);
+      if (!isPaystackConfigured()) {
+        fail(res, 'payments are not configured (missing Paystack environment variables)', 503);
+        return;
+      }
+      const result = await paymentService.initiate(
+        req.user!.id,
+        req.body as InitiatePaymentInput,
+      );
+      created(res, result);
     } catch (err) {
       next(err);
     }
   },
-  async webhook(req: Request, _res: Response, next: NextFunction): Promise<void> {
+
+  async webhook(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const signature = req.headers['x-paystack-signature'] as string;
-      await paymentService.handleWebhook(req.body, signature);
+      if (!isPaystackConfigured()) {
+        fail(res, 'payments are not configured (missing Paystack environment variables)', 503);
+        return;
+      }
+      const signature = req.headers['x-paystack-signature'] as string | undefined;
+      const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from('');
+      const result = await paymentService.handleWebhook(rawBody, signature);
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
-  async release(req: Request, _res: Response, next: NextFunction): Promise<void> {
+
+  async release(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await paymentService.release(req.user!.id, routeParam(req.params.id));
+      const result = await paymentService.release(req.user!.id, routeParam(req.params.id));
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
-  async getById(req: Request, _res: Response, next: NextFunction): Promise<void> {
+
+  async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await paymentService.getById(req.user!.id, routeParam(req.params.id));
+      const result = await paymentService.getById(
+        req.user!.id,
+        req.user!.role,
+        routeParam(req.params.id),
+      );
+      ok(res, result);
     } catch (err) {
       next(err);
     }
   },
-  async listMine(req: Request, _res: Response, next: NextFunction): Promise<void> {
+
+  async listMine(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await paymentService.listMine(req.user!.id);
+      const result = await paymentService.listMine(req.user!.id);
+      ok(res, result);
     } catch (err) {
       next(err);
     }

@@ -21,3 +21,5 @@ export const configUpdateSchema = z.object({
 
 export type VerificationStatusInput = z.infer<typeof verificationStatusSchema>;
 export type KycDecisionInput = z.infer<typeof kycDecisionSchema>;
+export type ReportStatusInput = z.infer<typeof reportStatusSchema>;
+export type ConfigUpdateInput = z.infer<typeof configUpdateSchema>;

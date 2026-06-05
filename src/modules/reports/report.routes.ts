@@ -36,7 +36,7 @@ export const reportRouter: Router = Router();
  *                 minLength: 10
  *     responses:
  *       201:
- *         description: Report filed successfully
+ *         description: Created; data.report (status open)
  *       400:
  *         description: Self-report attempt
  *       401:
@@ -60,7 +60,7 @@ reportRouter.post('/', authenticate, validate(createReportSchema), reportControl
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of reports returned successfully
+ *         description: Success; data.reports (current user only)
  *       401:
  *         description: Missing or invalid bearer token
  */
